@@ -2,9 +2,11 @@
 
 Contact: Benjamin Severn, benzsevern@gmail.com
 
+Archived release: v1.0, doi:[10.5281/zenodo.24239596](https://doi.org/10.5281/zenodo.24239596).
+
 This repository contains a Lean 4 formalization of the main results of
 
-> Benjamin Severn, *G32* (v0.18), Zenodo, doi:[10.5281/zenodo.24171563](https://doi.org/10.5281/zenodo.24171563).
+> Benjamin Severn, *Algebraicity of Weil classes on abelian sixfolds of Weil type for Q(√−3) with discriminant −2* (G32, v0.18), Zenodo, doi:[10.5281/zenodo.24171563](https://doi.org/10.5281/zenodo.24171563).
 
 It is a self-contained snapshot, cut from commit 0ea348972dc8396faee9eef1caa89f9d5908823f of the author's
 development repository. It contains exactly the import closure of the final

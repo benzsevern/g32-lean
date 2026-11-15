@@ -2,6 +2,7 @@ cff-version: 1.2.0
 message: "If you use this formalization, please cite it and the paper it formalizes."
 title: "g32-lean: a Lean 4 formalization of the G32 paper"
 version: "1.0"
+doi: 10.5281/zenodo.24239596
 date-released: 2026-11-15
 license: Apache-2.0
 repository-code: "https://github.com/benzsevern/g32-lean"

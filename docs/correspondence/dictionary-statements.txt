@@ -1,0 +1,103 @@
+@HodgeLean.Foundations.Program.G32Native.printed_polarization_dictionary : ∀
+  {A : CategoryTheory.Over (AlgebraicGeometry.Spec ↧ℂ)} [inst : CategoryTheory.GrpObj A]
+  [inst_1 : CategoryTheory.IsCommMonObj A] [inst_2 : AlgebraicGeometry.IsIntegral A.left]
+  [inst_3 : AlgebraicGeometry.Smooth A.hom] [inst_4 : AlgebraicGeometry.IsProjective A.hom]
+  (P : HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple A),
+  P.discriminant = HodgeLean.RealDefs.classNegTwo → ∃ pol, HodgeLean.RealDefs.IsMemberOfM ⋯ ⋯ ⋯ ⋯ P.W pol
+structure HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple
+  (A : CategoryTheory.Over (AlgebraicGeometry.Spec ↧ℂ)) [CategoryTheory.GrpObj A] [CategoryTheory.IsCommMonObj A]
+  [AlgebraicGeometry.IsIntegral A.left] [AlgebraicGeometry.Smooth A.hom] [AlgebraicGeometry.IsProjective A.hom] : Type
+number of parameters: 6
+fields:
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.action : QuadraticAlgebra ℚ (-3) 0 →ₐ[ℚ]
+      HodgeLean.Adapters.AbelianEnd0 A
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.dim_eq : TopologicalSpace.dim ↥A.left = 6
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.tangent_plus : Module.finrank ℂ
+        ↥(((HodgeLean.Foundations.Program.G32Native.printedAnalyticAction A)
+                (self.action QuadraticAlgebra.omega)).eigenspace
+            (HodgeBlocks.WeilAction.omegaC 3)) =
+      3
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.tangent_minus : Module.finrank ℂ
+        ↥(((HodgeLean.Foundations.Program.G32Native.printedAnalyticAction A)
+                (self.action QuadraticAlgebra.omega)).eigenspace
+            (-HodgeBlocks.WeilAction.omegaC 3)) =
+      3
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.E : LinearMap.BilinForm ℚ
+      (Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1))
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.alternating : self.E.IsAlt
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.nondegenerate : self.E.Nondegenerate
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.compatible : ∀
+      (x : Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1)) (y : Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1)),
+      (self.E ((LinearMap.dualMap ((HodgeLean.Adapters.pwAction A self.action) QuadraticAlgebra.omega)) x)) y =
+        -(self.E x) ((LinearMap.dualMap ((HodgeLean.Adapters.pwAction A self.action) QuadraticAlgebra.omega)) y)
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.riemann_invariant : ∀
+      (x y : Module.Dual ℝ (TensorProduct ℚ ℝ (HodgeLean.RealDefs.HQ A 1))),
+      ((HodgeLean.Foundations.Program.G32Native.printedRealForm A self.E)
+            (x ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯))
+          (y ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯) =
+        ((HodgeLean.Foundations.Program.G32Native.printedRealForm A self.E) x) y
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.riemann_positive : ∀
+      (x : Module.Dual ℝ (TensorProduct ℚ ℝ (HodgeLean.RealDefs.HQ A 1))),
+      x ≠ 0 →
+        0 <
+          ((HodgeLean.Foundations.Program.G32Native.printedRealForm A self.E)
+              (x ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯))
+            x
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.integral_scale : ∃ c,
+      0 < c ∧
+        ∀ (l m : ↥(HodgeLean.Adapters.abelianPeriodLattice A)),
+          ∃ z,
+            c *
+                (self.E (HodgeLean.Foundations.Program.G32Native.printedLatticeVector A l))
+                  (HodgeLean.Foundations.Program.G32Native.printedLatticeVector A m) =
+              ↑z
+constructor:
+  HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.mk
+    {A : CategoryTheory.Over (AlgebraicGeometry.Spec ↧ℂ)} [CategoryTheory.GrpObj A] [CategoryTheory.IsCommMonObj A]
+    [AlgebraicGeometry.IsIntegral A.left] [AlgebraicGeometry.Smooth A.hom] [AlgebraicGeometry.IsProjective A.hom]
+    (action : QuadraticAlgebra ℚ (-3) 0 →ₐ[ℚ] HodgeLean.Adapters.AbelianEnd0 A)
+    (dim_eq : TopologicalSpace.dim ↥A.left = 6)
+    (tangent_plus :
+      Module.finrank ℂ
+          ↥(((HodgeLean.Foundations.Program.G32Native.printedAnalyticAction A)
+                  (action QuadraticAlgebra.omega)).eigenspace
+              (HodgeBlocks.WeilAction.omegaC 3)) =
+        3)
+    (tangent_minus :
+      Module.finrank ℂ
+          ↥(((HodgeLean.Foundations.Program.G32Native.printedAnalyticAction A)
+                  (action QuadraticAlgebra.omega)).eigenspace
+              (-HodgeBlocks.WeilAction.omegaC 3)) =
+        3)
+    (E : LinearMap.BilinForm ℚ (Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1))) (alternating : E.IsAlt)
+    (nondegenerate : E.Nondegenerate)
+    (compatible :
+      ∀ (x : Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1)) (y : Module.Dual ℚ (HodgeLean.RealDefs.HQ A 1)),
+        (E ((LinearMap.dualMap ((HodgeLean.Adapters.pwAction A action) QuadraticAlgebra.omega)) x)) y =
+          -(E x) ((LinearMap.dualMap ((HodgeLean.Adapters.pwAction A action) QuadraticAlgebra.omega)) y))
+    (riemann_invariant :
+      ∀ (x y : Module.Dual ℝ (TensorProduct ℚ ℝ (HodgeLean.RealDefs.HQ A 1))),
+        ((HodgeLean.Foundations.Program.G32Native.printedRealForm A E)
+              (x ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯))
+            (y ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯) =
+          ((HodgeLean.Foundations.Program.G32Native.printedRealForm A E) x) y)
+    (riemann_positive :
+      ∀ (x : Module.Dual ℝ (TensorProduct ℚ ℝ (HodgeLean.RealDefs.HQ A 1))),
+        x ≠ 0 →
+          0 <
+            ((HodgeLean.Foundations.Program.G32Native.printedRealForm A E)
+                (x ∘ₗ HodgeLean.Adapters.weightOneComplexStructure A ⋯ ⋯))
+              x)
+    (integral_scale :
+      ∃ c,
+        0 < c ∧
+          ∀ (l m : ↥(HodgeLean.Adapters.abelianPeriodLattice A)),
+            ∃ z,
+              c *
+                  (E (HodgeLean.Foundations.Program.G32Native.printedLatticeVector A l))
+                    (HodgeLean.Foundations.Program.G32Native.printedLatticeVector A m) =
+                ↑z) :
+    HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple A
+'HodgeLean.Foundations.Program.G32Native.printed_polarization_dictionary' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

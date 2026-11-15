@@ -1,0 +1,6 @@
+import HodgeLean.Foundations.Program.G32Native.PELOrthogonalCoordinates
+import HodgeLean.Foundations.Library.Lie.SpecialOrthogonalSimple
+
+namespace HodgeLean.Foundations.Program.GeneralTypeIII
+export HodgeLean.Foundations.Library.Lie (pelSkew_reverse pelSkew_bracket_chain pel_five_positions pelSkew_generate pelSkew_sum pel_orthogonal_isSimple_aux pel_so6_isSimple_aux)
+end HodgeLean.Foundations.Program.GeneralTypeIII

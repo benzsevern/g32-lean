@@ -1,0 +1,12 @@
+import HodgeLean.Foundations.Program.PeriodMarkingClassification
+import HodgeLean.Foundations.Program.PeriodMarkingCover
+import HodgeLean.Foundations.Program.PeriodMarkingParabolic
+
+noncomputable section
+open CategoryTheory AlgebraicTopology.Singular HodgeLean.Papers
+open HodgeLean.Foundations.WeilHermitian HodgeLean.Foundations.HermitianForm
+open scoped Manifold ContDiff TensorProduct
+namespace HodgeLean.Foundations.Program
+attribute [local instance] b4cov_sphChartedSpace b4cov_sph_isManifold
+
+end HodgeLean.Foundations.Program

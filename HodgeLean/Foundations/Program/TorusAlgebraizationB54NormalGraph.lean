@@ -1,0 +1,204 @@
+import HodgeLean.Adapters.GagaMapsProofs
+
+noncomputable section
+set_option maxHeartbeats 400000
+open CategoryTheory AlgebraicGeometry AlgebraicGeometry.ComplexPoint TopologicalSpace Set
+open scoped MonoidalCategory
+open HodgeLean.Foundations HodgeLean.Adapters
+namespace HodgeLean.Foundations.Program
+
+private theorem b54_isReduced_subscheme {Z : Scheme.{0}} (S : Closeds Z) :
+    IsReduced (Scheme.IdealSheafData.vanishingIdeal S).subscheme := by
+  set I := Scheme.IdealSheafData.vanishingIdeal S
+  have h : ∀ U : Z.affineOpens, IsReduced (I.subschemeCover.openCover.X U) := fun U => by
+    have : _root_.IsReduced (Γ(Z, U.1) ⧸ I.ideal U) :=
+      (Ideal.isRadical_iff_quotient_reduced _).1 (PrimeSpectrum.isRadical_vanishingIdeal _)
+    change IsReduced (Spec (CommRingCat.of (Γ(Z, U.1) ⧸ I.ideal U)))
+    infer_instance
+  exact @IsReduced.of_openCover _ I.subschemeCover.openCover h
+
+/-- The underlying point of a complex point of a complex scheme locally of finite type is
+closed. -/
+private theorem b54_isClosed_underlying {W : Over (Spec ↧ℂ)} [LocallyOfFiniteType W.hom]
+    (z : ComplexPoint W) : IsClosed ({z.underlying} : Set W.left) :=
+  ((pointEquivClosedPoint W.hom) ⟨z.left, by simp⟩).2
+
+/-- Every closed point of a complex scheme locally of finite type underlies a complex point. -/
+private theorem b54_exists_underlying {W : Over (Spec ↧ℂ)} [LocallyOfFiniteType W.hom]
+    (x : W.left) (hx : IsClosed ({x} : Set W.left)) :
+    ∃ z : ComplexPoint W, z.underlying = x :=
+  ⟨Over.homMk (pointOfClosedPoint W.hom x hx) (by simp), pointOfClosedPoint_apply W.hom x hx _⟩
+
+/-- The residue field map at a closed point of a morphism between complex schemes locally of
+finite type is an isomorphism. -/
+private theorem b54_isIso_residueFieldMap {A B : Scheme.{0}} (sA : A ⟶ Spec ↧ℂ)
+    (sB : B ⟶ Spec ↧ℂ) [LocallyOfFiniteType sA] [LocallyOfFiniteType sB] (g : A ⟶ B)
+    (hg : g ≫ sB = sA) (a : A) (ha : IsClosed ({a} : Set A)) (hga : IsClosed ({g a} : Set B)) :
+    IsIso (g.residueFieldMap a) := by
+  have h : (residueFieldIsoBase sB (g a) hga).inv ≫ g.residueFieldMap a =
+      (residueFieldIsoBase sA a ha).inv := by
+    apply Spec.map_injective
+    rw [Spec.map_comp, SpecMap_residueFieldIsoBase_inv,
+      SpecMap_residueFieldIsoBase_inv,
+      Scheme.Hom.SpecMap_residueFieldMap_fromSpecResidueField_assoc,
+      hg]
+  have : g.residueFieldMap a = (residueFieldIsoBase sB (g a) hga).hom ≫
+      (residueFieldIsoBase sA a ha).inv := by
+    rw [← h, Iso.hom_inv_id_assoc]
+  rw [this]
+  infer_instance
+
+/-- A closed graph over a normal projective source determines an algebraic morphism.
+Source: Hartshorne, Algebraic Geometry, III, Corollary 11.4; EGA III, 4.4. -/
+theorem b54_morphism_of_closed_graph_normal (X Y : Over (Spec ↧ℂ))
+    [IsIntegral X.left] [IsProjective X.hom]
+    [IsIntegral Y.left] [IsProjective Y.hom]
+    (hnormal : zmtiso_IsNormal X.left)
+    (F : ComplexPoint X → ComplexPoint Y)
+    (C : Set (gagam_product X Y).left) (hC : IsClosed C)
+    (hgraph : gagam_graph X Y F =
+      (Point.underlying : ComplexPoint (gagam_product X Y) →
+        (gagam_product X Y).left) ⁻¹' C) :
+    ∃ f : X ⟶ Y, Point.map f = F := by
+  classical
+  have : LocallyOfFiniteType (gagam_product X Y).hom := by
+    change LocallyOfFiniteType (Limits.pullback.fst X.hom Y.hom ≫ X.hom)
+    infer_instance
+  set I := Scheme.IdealSheafData.vanishingIdeal
+    (⟨C, hC⟩ : Closeds (Limits.pullback X.hom Y.hom : Scheme)) with hI
+  set Γ := I.subscheme
+  set ι : Γ ⟶ Limits.pullback X.hom Y.hom := I.subschemeι with hι
+  have hrange : Set.range ι = C := by
+    rw [hι, Scheme.IdealSheafData.range_subschemeι]
+    rfl
+  have hιinj : Function.Injective ι := ι.isClosedEmbedding.injective
+  have : IsClosedImmersion ι := by rw [hι]; infer_instance
+  set pr : Γ ⟶ X.left := ι ≫ Limits.pullback.fst X.hom Y.hom with hpr
+  have hmem : ∀ w : ComplexPoint (gagam_product X Y),
+      w ∈ gagam_graph X Y F ↔ w.underlying ∈ C := fun w => by
+    rw [hgraph]; rfl
+  have hfst : ∀ w : ComplexPoint (gagam_product X Y),
+      (Point.map (CartesianMonoidalCategory.fst X Y) w).underlying =
+        Limits.pullback.fst X.hom Y.hom w.underlying := fun w => rfl
+  -- closed points of `Γ` come from graph points
+  have hclosedP : ∀ z : Γ, IsClosed ({z} : Set Γ) →
+      IsClosed ({ι z} : Set (Limits.pullback X.hom Y.hom : Scheme)) := fun z hz => by
+    simpa using ι.isClosedEmbedding.isClosedMap _ hz
+  have hgraphpt : ∀ z : Γ, IsClosed ({z} : Set Γ) →
+      ∃ w : ComplexPoint (gagam_product X Y), w.underlying = ι z ∧ w ∈ gagam_graph X Y F :=
+        fun z hz => by
+    obtain ⟨w, hw⟩ := b54_exists_underlying (W := gagam_product X Y) (ι z) (hclosedP z hz)
+    refine ⟨w, hw, (hmem w).2 ?_⟩
+    rw [hw, ← hrange]; exact ⟨z, rfl⟩
+  have hinj : ∀ ⦃z₁ z₂ : Γ⦄, IsClosed ({z₁} : Set Γ) → IsClosed ({z₂} : Set Γ) →
+      pr z₁ = pr z₂ → z₁ = z₂ := by
+    intro z₁ z₂ h₁ h₂ h
+    obtain ⟨w₁, hw₁, hg₁⟩ := hgraphpt z₁ h₁
+    obtain ⟨w₂, hw₂, hg₂⟩ := hgraphpt z₂ h₂
+    have e₁ : Point.map (CartesianMonoidalCategory.fst X Y) w₁ =
+        Point.map (CartesianMonoidalCategory.fst X Y) w₂ := by
+      apply underlying_injective_of_locallyOfFiniteType
+      rw [hfst, hfst, hw₁, hw₂]
+      exact h
+    have e₂ : Point.map (CartesianMonoidalCategory.snd X Y) w₁ =
+        Point.map (CartesianMonoidalCategory.snd X Y) w₂ := by
+      rw [show _ = _ from hg₁, show _ = _ from hg₂, e₁]
+    have : w₁ = w₂ := CartesianMonoidalCategory.hom_ext _ _ e₁ e₂
+    apply hιinj
+    rw [← hw₁, ← hw₂, this]
+  have hsurj : ∀ x : X.left, IsClosed ({x} : Set X.left) →
+      ∃ z : Γ, IsClosed ({z} : Set Γ) ∧ pr z = x := by
+    intro x hx
+    obtain ⟨a, ha⟩ := b54_exists_underlying (W := X) x hx
+    let w : ComplexPoint (gagam_product X Y) := CartesianMonoidalCategory.lift a (F a)
+    have hwfst : Point.map (CartesianMonoidalCategory.fst X Y) w = a :=
+      CartesianMonoidalCategory.lift_fst _ _
+    have hwsnd : Point.map (CartesianMonoidalCategory.snd X Y) w = F a :=
+      CartesianMonoidalCategory.lift_snd _ _
+    have hwC : w.underlying ∈ C := (hmem w).1 (by
+      change Point.map (CartesianMonoidalCategory.snd X Y) w =
+        F (Point.map (CartesianMonoidalCategory.fst X Y) w)
+      rw [hwfst, hwsnd])
+    rw [← hrange] at hwC
+    obtain ⟨z, hz⟩ := hwC
+    refine ⟨z, ?_, ?_⟩
+    · have h1 : IsClosed ({ι z} : Set (Limits.pullback X.hom Y.hom : Scheme)) := by
+        rw [hz]; exact b54_isClosed_underlying w
+      have h2 : ({z} : Set Γ) = ι ⁻¹' {ι z} := by ext; simp [hιinj.eq_iff]
+      rw [h2]
+      exact h1.preimage ι.continuous
+    · change Limits.pullback.fst X.hom Y.hom (ι z) = x
+      rw [hz, ← hfst, hwfst, ha]
+  have : LocallyOfFiniteType (pr ≫ X.hom) := by rw [hpr]; infer_instance
+  have : JacobsonSpace Γ := LocallyOfFiniteType.jacobsonSpace (pr ≫ X.hom)
+  have : JacobsonSpace X.left := LocallyOfFiniteType.jacobsonSpace X.hom
+  have : IsProper pr := by rw [hpr]; infer_instance
+  have hprc : ∀ z : Γ, IsClosed ({z} : Set Γ) → IsClosed ({pr z} : Set X.left) := fun z hz => by
+    simpa using pr.isClosedMap _ hz
+  have : IsReduced Γ := b54_isReduced_subscheme _
+  have key : ∀ A : Set Γ, IsClosed A → Set.univ ⊆ pr '' A → Set.univ ⊆ A := by
+    intro A hA hAu
+    have hcl : closedPoints Γ ⊆ A := by
+      intro z hz
+      obtain ⟨a, haA, ha⟩ := hAu (Set.mem_univ (pr z))
+      obtain ⟨a', ⟨ha'A, ha'f⟩, ha'c⟩ := nonempty_inter_closedPoints
+        (Z := A ∩ pr ⁻¹' {pr z}) ⟨a, haA, ha⟩
+        (hA.inter ((hprc z hz).preimage pr.continuous)).isLocallyClosed
+      rwa [hinj ha'c hz ha'f] at ha'A
+    rw [← closure_closedPoints]
+    exact closure_minimal hcl hA
+  have : IrreducibleSpace Γ := by
+    rw [irreducibleSpace_def]
+    obtain ⟨x, -, hx⟩ := nonempty_inter_closedPoints (X := X.left) Set.univ_nonempty
+      isClosed_univ.isLocallyClosed
+    obtain ⟨z, -, -⟩ := hsurj x hx
+    refine ⟨⟨z, Set.mem_univ _⟩, ?_⟩
+    rw [isPreirreducible_iff_isClosed_union_isClosed]
+    intro A B hA hB hAB
+    have hcov : (Set.univ : Set X.left) ⊆ pr '' A ∪ pr '' B := by
+      rw [← closure_closedPoints]
+      refine closure_minimal (fun x hx => ?_) ((pr.isClosedMap _ hA).union (pr.isClosedMap _ hB))
+      obtain ⟨z, -, rfl⟩ := hsurj x hx
+      rcases hAB (Set.mem_univ z) with h | h
+      · exact Or.inl ⟨z, h, rfl⟩
+      · exact Or.inr ⟨z, h, rfl⟩
+    rcases (isPreirreducible_iff_isClosed_union_isClosed.1
+      (IrreducibleSpace.isIrreducible_univ X.left).2) _ _ (pr.isClosedMap _ hA)
+      (pr.isClosedMap _ hB) hcov with h | h
+    · exact Or.inl (key A hA h)
+    · exact Or.inr (key B hB h)
+  have : IsIntegral Γ := isIntegral_of_irreducibleSpace_of_isReduced Γ
+  have hres : ∀ z : Γ, IsClosed ({z} : Set Γ) → IsIso (pr.residueFieldMap z) := fun z hz =>
+    b54_isIso_residueFieldMap (pr ≫ X.hom) X.hom pr rfl z hz (hprc z hz)
+  have : IsIso pr := zmtiso_isIso_of_proper_injective_normal (k := ℂ) (pr ≫ X.hom) X.hom pr
+    hnormal rfl hinj hsurj hres
+  have hw : (inv pr ≫ ι ≫ Limits.pullback.snd X.hom Y.hom) ≫ Y.hom = X.hom := by
+    have hc : ι ≫ Limits.pullback.snd X.hom Y.hom ≫ Y.hom = pr ≫ X.hom := by
+      rw [hpr, Category.assoc, Limits.pullback.condition]
+    simp only [Category.assoc]
+    rw [hc, IsIso.inv_hom_id_assoc]
+  refine ⟨Over.homMk (inv pr ≫ ι ≫ Limits.pullback.snd X.hom Y.hom) hw, funext fun a => ?_⟩
+  let w : ComplexPoint (gagam_product X Y) := Over.homMk (a.left ≫ inv pr ≫ ι) (by
+    change (a.left ≫ inv pr ≫ ι) ≫ Limits.pullback.fst X.hom Y.hom ≫ X.hom = _
+    simp only [Category.assoc]
+    rw [← Category.assoc ι, ← hpr, IsIso.inv_hom_id_assoc]
+    exact Over.w a)
+  have hwfst : Point.map (CartesianMonoidalCategory.fst X Y) w = a := by
+    apply Over.OverMorphism.ext
+    change (a.left ≫ inv pr ≫ ι) ≫ Limits.pullback.fst X.hom Y.hom = a.left
+    simp only [Category.assoc]
+    rw [← hpr, IsIso.inv_hom_id, Category.comp_id]
+  have hwC : w.underlying ∈ C := by
+    rw [← hrange]
+    exact ⟨(a.left ≫ inv pr) (IsLocalRing.closedPoint ℂ), rfl⟩
+  have hg : Point.map (CartesianMonoidalCategory.snd X Y) w =
+      F (Point.map (CartesianMonoidalCategory.fst X Y) w) := (hmem w).2 hwC
+  rw [hwfst] at hg
+  rw [← hg]
+  apply Over.OverMorphism.ext
+  change a.left ≫ inv pr ≫ ι ≫ Limits.pullback.snd X.hom Y.hom =
+    (a.left ≫ inv pr ≫ ι) ≫ Limits.pullback.snd X.hom Y.hom
+  simp only [Category.assoc]
+
+
+end HodgeLean.Foundations.Program

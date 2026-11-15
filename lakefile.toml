@@ -1,0 +1,19 @@
+name = "g32-lean"
+defaultTargets = ["HodgeLean"]
+description = "Lean 4 formalization of the G32 paper (Benjamin Severn, doi:10.5281/zenodo.24171563)"
+homepage = "https://github.com/benzsevern/g32-lean"
+license = "Apache-2.0"
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "HodgeConjecture"
+git = "https://github.com/Paul-Lez/HodgeConjecture"
+rev = "2ead713179628a3c738197d5996f51c8a9c886ac"
+
+[[lean_lib]]
+name = "HodgeLean"

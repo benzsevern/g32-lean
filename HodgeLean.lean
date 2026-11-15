@@ -1,0 +1,14 @@
+-- Root of the G32 formalization snapshot: the final statements and the dictionary they use.
+import HodgeLean.Foundations.Program.G32Native.G32PaperFinalC3
+import HodgeLean.Foundations.Program.G32Native.G32PaperFinalC3Supplied
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedPowers
+import HodgeLean.Foundations.Program.G32Native.G32PaperActualPowers
+import HodgeLean.Foundations.Program.G32Native.PrintedPolarizationDictionary
+import HodgeLean.Foundations.Program.G32Native.G32Corollary82IntrinsicForm
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedReferencePowers
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedFamilyFree
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedGeneric
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedFromData
+import HodgeLean.Foundations.Program.G32Native.G32PaperPrintedFromDataPEL
+import HodgeLean.Foundations.Program.G32Native.G32WeilDeterminant
+import HodgeLean.Adapters.HodgeGroupHomology

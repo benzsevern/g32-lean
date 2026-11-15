@@ -1,0 +1,30 @@
+g32-lean
+Copyright 2026 Benjamin Severn
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+Under Section 4(d) of that licence, this NOTICE file must be kept in any
+redistribution of this work or of a derivative work.
+
+This repository is the import closure of the final statements of the G32
+formalization, cut from commit 0ea348972dc8396faee9eef1caa89f9d5908823f of the
+author's development repository.
+
+This product includes software from the following projects, each under the
+Apache License, Version 2.0, with its licence file (and NOTICE file, where the
+project has one) kept in the ported tree:
+
+  - lean-CA (Bastiaan J. Braams), in HodgeLean/Ported/LeanCA
+  - TauCeti (the Tau Ceti contributors), in HodgeLean/Ported/TauCeti
+  - lean4-markman25-hodge-abelian-fourfolds, in HodgeLean/Port/Markman
+  - hironaka (Resolution), https://github.com/resolutionorg/hironaka at commit
+    044d89c9455859446fc5e986667319f910e15f4b, in HodgeLean/Ported/Hironaka
+  - NYLL (N. Yamaguchi), https://github.com/n-yamaguchi-0729/NYLL at commit
+    21896ca9a10770a5ae31421357b003e76d06c965, in HodgeLean/Ported/NYLL; its own
+    NOTICE file, HodgeLean/Ported/NYLL/NOTICE, lists further third-party notices and
+    is kept with it
+
+The Weil port (AxiomMath) present in the development repository is not in the import closure of
+the G32 statements and is not included in this snapshot.
+
+It depends on Paul-Lez/HodgeConjecture and on Mathlib, which are fetched
+separately at the commits pinned in lake-manifest.json.

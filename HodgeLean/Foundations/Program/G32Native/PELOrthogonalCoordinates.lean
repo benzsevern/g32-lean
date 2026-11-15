@@ -1,0 +1,5 @@
+import HodgeLean.Foundations.Library.Lie.SpecialOrthogonalCoordinates
+
+namespace HodgeLean.Foundations.Program.GeneralTypeIII
+export HodgeLean.Foundations.Library.Lie (pelSkew pelSkew_mem pelSkew_bracket_entry pelSkew_double_entry pelSkew_extract)
+end HodgeLean.Foundations.Program.GeneralTypeIII

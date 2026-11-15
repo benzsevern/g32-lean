@@ -1,0 +1,663 @@
+# Quoted Lean declarations for the referee: source text with full statement headers.
+# Theorems: from the declaration line to the start of the proof. Definitions and structures: the full definition (up to 45 lines).
+# Full elaborated #print output (11 MB): repository file docs/notes/g32-packet-defs/lean-definitions.txt.
+
+
+==================== F3 ====================
+
+-- F3 | HodgeLean/Adapters/PolarizedHodgeAbelian.lean:49 | HodgeLean.Adapters.weightOneComplexStructure   [main]
+/-- The canonical real weight-one complex structure, selected from the `-C` characterization.
+Source: Birkenhake--Lange, *Complex Abelian Varieties*, 2nd ed., Ch. 1;
+van Geemen, *An introduction to the Hodge conjecture for abelian varieties*, §5. -/
+noncomputable def weightOneComplexStructure
+    (X : Over (Spec ↧ℂ)) [GrpObj X] [IsIntegral X.left] [Smooth X.hom]
+    [IsProjective X.hom] (hF : FiniteBetti X) (hB : BettiDeRhamIso X) :
+    ℝ ⊗[ℚ] HQ X 1 →ₗ[ℝ] ℝ ⊗[ℚ] HQ X 1 :=
+  Classical.choose (spec_exists_weightOneComplexStructure_dictionary X hF hB)
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/GeometricTangentEigenrank.lean:15 | HodgeLean.Foundations.Program.G32Native.geometric_holomorphic_eigenrank_aux   [main]
+/-- Analytic tangent eigenvalue multiplicities equal the multiplicities on holomorphic
+cohomology, for every rational geometric endomorphism and every complex eigenvalue.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §1.2 (analytic and rational
+representations) and Theorem 1.4.1; duality between invariant one-forms and the tangent space.
+This is a rank comparison for the transpose, with the same eigenvalue. -/
+theorem geometric_holomorphic_eigenrank_aux
+    (A : Over (Spec ↧ℂ)) [GrpObj A] [IsCommMonObj A]
+    [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (f : AbelianEnd0 A) (z : ℂ) :
+    letI := (torusCohomology_cupProductOf A).finite
+    finrank ℂ ↥(Module.End.eigenspace ((abelianEnd0Action A f).unop.baseChange ℂ) z ⊓
+      (abelianWeightOneHodgeStructure A).H (1, 0)) =
+      finrank ℂ (Module.End.eigenspace (printedAnalyticAction A f) z) := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PolarizationDualDeterminant.lean:15 | HodgeLean.Foundations.Program.G32Native.polarization_dual_determinant   [main]
+/-- The homological and cohomological determinant classes agree in even quadratic dimension.
+Source: van Geemen, LNM 1594, §5.4; contraction and the negative-action comparison in
+`MarkmanTransport.homologyEquiv_gram` and `MarkmanDiscriminant.weilDetClass_negative_of_even`.
+The transpose action on homology intertwines with the negative action after contraction. -/
+theorem polarization_dual_determinant
+    {V : Type*} [AddCommGroup V] [Module ℚ V] [FiniteDimensional ℚ V]
+    {a : ℚ} [Fact (∀ r : ℚ, r ^ 2 ≠ a + 0 * r)]
+    (J : {J : Module.End ℚ V // J ∘ₗ J = a • LinearMap.id})
+    {ω : ⋀[ℚ]^2 V} (hω : IsNondegenerate ω) (hR : IsRosatiSkew ω J.1)
+    (hE : (riemannForm ω).IsAlt) (hn : (riemannForm ω).Nondegenerate)
+    (heven : Even (finrank (QuadraticAlgebra ℚ a 0) (WithJ V J))) :
+    weilDetClass (riemannForm ω) (transposeAction J) (riemannForm_skew J hR) hE hn =
+      weilDetClass (dualForm hω) J ((isRosatiSkew_iff_dualForm hω J.1).1 hR)
+        (isAlt_dualForm hω) (nondegenerate_dualForm hω) := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PolarizationTraceNormalization.lean:9 | HodgeLean.Foundations.Program.G32Native.polarization_trace_normalization   [main]
+/-- The printed trace convention recovers the coefficient of the quadratic generator.
+Source: G32 v0.18, lines 139–142; van Geemen, LNM 1594, Lemma 5.2.
+The denominator is `2 * omega`, with `omega ^ 2 = -3`. -/
+theorem polarization_trace_normalization (a b : ℚ) :
+    QuadraticAlgebra.trace
+      ((⟨a, b⟩ : QuadraticAlgebra ℚ (-3) 0) / (2 * QuadraticAlgebra.omega)) = b := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizationDictionary.lean:18 | HodgeLean.Foundations.Program.G32Native.printed_tangent_weil_type_aux   [main]
+/-- Tangent multiplicities give balanced multiplicities on holomorphic cohomology.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §1.2 and Theorem 1.4.1;
+G32 v0.18, Definition 2.1, line 136. -/
+theorem printed_tangent_weil_type_aux (P : PrintedPolarizedTriple A) :
+    letI := (torusCohomology_cupProductOf A).finite
+    P.W.IsWeilType := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:20 | HodgeLean.Foundations.Program.G32Native.printedAnalyticAction   [main]
+/-- The rational analytic representation on the universal-cover tangent model.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §1.2; `spec_analyticRepresentation_ringHom`.
+The coordinates are those of `complexExponential A (dim A.left)`. -/
+def printedAnalyticAction : AbelianEnd0 A →ₐ[ℚ] Module.End ℂ (Fin (dim A.left) → ℂ) :=
+  Algebra.TensorProduct.lift (Algebra.ofId ℚ _)
+    (Classical.choose (spec_analyticRepresentation_ringHom A)).toIntAlgHom
+    fun q _ => by rw [Algebra.ofId_apply]; exact Algebra.commute_algebraMap_left q _
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:39 | HodgeLean.Foundations.Program.G32Native.printedLatticeVector   [main]
+/-- A period-lattice vector as a rational homology functional.
+Source: Birkenhake–Lange, §1.1; `abelianPeriod` evaluates cohomology on the specified loop. -/
+def printedLatticeVector (l : abelianPeriodLattice A) : Dual ℚ (HQ A 1) :=
+  (LinearMap.proj l).comp (abelianPeriod A)
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:44 | HodgeLean.Foundations.Program.G32Native.printedRealForm   [main]
+/-- The real extension of a rational homological form, in the dual-of-cohomology model.
+Source: Bourbaki, Algebra, II §5; `IsBaseChange.toDualBaseChange`. -/
+def printedRealForm (E : LinearMap.BilinForm ℚ (Dual ℚ (HQ A 1))) :
+    LinearMap.BilinForm ℝ (Dual ℝ (ℝ ⊗[ℚ] HQ A 1)) :=
+  letI := (torusCohomology_cupProductOf A).finite
+  let e := ((TensorProduct.isBaseChange ℚ (HQ A 1) ℝ).toDualBaseChange).symm
+  (E.baseChange ℝ).compl₁₂ e.toLinearMap e.toLinearMap
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:57 | HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple   [main]
+/-- Printed geometric input in universal-cover tangent coordinates and rational homology
+coordinates. Homology is represented by the dual of `HQ A 1`, with its actual period lattice;
+the real complex structure is the transpose of the canonical structure on cohomology.
+No cohomological membership field is supplied here.
+Source: G32 v0.18, Definition 2.1, lines 133–142; van Geemen, LNM 1594, Lemma 5.2.
+The two tangent eigenspaces have dimension three. The trace convention is the coefficient of
+`omega` in `E(x,Jy) + omega * E(x,y)`, as in `WeilHermitian.weilHermitian`. -/
+structure PrintedPolarizedTriple where
+  action : QuadraticAlgebra ℚ (-3) 0 →ₐ[ℚ] AbelianEnd0 A
+  dim_eq : TopologicalSpace.dim A.left = 6
+  tangent_plus : finrank ℂ (Module.End.eigenspace
+    (printedAnalyticAction A (action QuadraticAlgebra.omega)) (HodgeBlocks.WeilAction.omegaC 3)) = 3
+  tangent_minus : finrank ℂ (Module.End.eigenspace
+    (printedAnalyticAction A (action QuadraticAlgebra.omega)) (-HodgeBlocks.WeilAction.omegaC 3)) = 3
+  E : LinearMap.BilinForm ℚ (Dual ℚ (HQ A 1))
+  alternating : E.IsAlt
+  nondegenerate : E.Nondegenerate
+  compatible : ∀ x y,
+    E ((pwAction A action QuadraticAlgebra.omega).dualMap x) y =
+      -E x ((pwAction A action QuadraticAlgebra.omega).dualMap y)
+  riemann_invariant : ∀ x y : Dual ℝ (ℝ ⊗[ℚ] HQ A 1),
+    printedRealForm A E
+      (x ∘ₗ weightOneComplexStructure A (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A))
+      (y ∘ₗ weightOneComplexStructure A (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)) =
+        printedRealForm A E x y
+  riemann_positive : ∀ x : Dual ℝ (ℝ ⊗[ℚ] HQ A 1), x ≠ 0 →
+    0 < printedRealForm A E
+      (x ∘ₗ weightOneComplexStructure A (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)) x
+  integral_scale : ∃ c : ℚ, 0 < c ∧ ∀ l m : abelianPeriodLattice A,
+    ∃ z : ℤ, c * E (printedLatticeVector A l) (printedLatticeVector A m) = z
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:85 | HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.W   [main]
+/-- The induced cohomological action; its Hodge preservation comes from geometric pullback.
+Source: Birkenhake–Lange, §1.2; `f1_weilAction`. -/
+def W (P : PrintedPolarizedTriple A) :=
+  f1_weilAction A P.action QuadraticAlgebra.omega 3 (by
+    rw [QuadraticAlgebra.omega_pow_two_eq_add]; norm_num [Algebra.algebraMap_eq_smul_one])
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizedTriple.lean:92 | HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.discriminant   [main]
+/-- The printed Hermitian discriminant on rational homology.
+Source: van Geemen, LNM 1594, Lemma 5.2; G32 v0.18, line 139.
+Its form is exactly `E(x,Jy) + omega * E(x,y)`, without a signed determinant factor. -/
+def discriminant (P : PrintedPolarizedTriple A) :
+    ℚˣ ⧸ HermitianForm.normSubgroup (QuadraticAlgebra ℚ (-3) 0) :=
+  letI := (torusCohomology_cupProductOf A).finite
+  weilDetClass P.E (transposeAction ⟨P.W.J, P.W.J_sq⟩)
+    P.compatible P.alternating P.nondegenerate
+end PrintedPolarizedTriple
+end HodgeLean.Foundations.Program.G32Native
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:33 | HodgeLean.RealDefs.Compare.Markman.transposeAction   [main]
+/-- The transposed generator on homology.
+Source: Markman's `PolarizedWeilType.fT`, the transpose of the action on `H¹`. -/
+def transposeAction : {T : Module.Dual ℚ V →ₗ[ℚ] Module.Dual ℚ V //
+    T ∘ₗ T = a • LinearMap.id} :=
+  ⟨J.1.dualMap, by
+    ext φ x
+    change φ (J.1 (J.1 x)) = a * φ x
+    rw [apply_apply J, map_smul, smul_eq_mul]⟩
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:26 | HodgeLean.RealDefs.Compare.Markman.negativeAction   [main]
+/-- The negative generator on cohomology.
+Source: the Rosati identity `contract ω ∘ Jᵀ = -J ∘ contract ω`. -/
+def negativeAction : {T : V →ₗ[ℚ] V // T ∘ₗ T = a • LinearMap.id} :=
+  ⟨-J.1, by ext x; simpa using LinearMap.congr_fun J.2 x⟩
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:44 | HodgeLean.RealDefs.Compare.Markman.riemannForm   [main]
+/-- The Riemann form of a 2-vector on homology.
+Source: `DualForm.lean`, `B_ω(φ,ψ) = ψ(contract ω φ)`. -/
+noncomputable def riemannForm (ω : ⋀[ℚ]^2 V) : LinearMap.BilinForm ℚ (Module.Dual ℚ V) :=
+  (Module.Dual.eval ℚ V).comp (contract ω)
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:66 | HodgeLean.RealDefs.Compare.Markman.homologyEquiv   [main]
+/-- Contraction is a quadratic-field-linear equivalence from homology with the transposed
+generator to cohomology with the negative generator.
+Source: the Rosati identity and `contractEquiv`; external roadmap §1.2, step 4. -/
+noncomputable def homologyEquiv {ω : ⋀[ℚ]^2 V} (hω : IsNondegenerate ω)
+    (hR : IsRosatiSkew ω J.1) :
+    WithJ (Module.Dual ℚ V) (transposeAction J) ≃ₗ[QuadraticAlgebra ℚ a 0]
+      WithJ V (negativeAction J) :=
+  { (WithJ.equiv (transposeAction J)).trans
+      ((contractEquiv hω).trans (WithJ.equiv (negativeAction J)).symm) with
+    map_smul' := by
+      intro z φ
+      let φ₀ := WithJ.equiv (transposeAction J) φ
+      change contract ω (z.re • φ₀ + z.im • J.1.dualMap φ₀) =
+        z.re • contract ω φ₀ + z.im • (-J.1) (contract ω φ₀)
+      have hr := LinearMap.congr_fun hR φ₀
+      change contract ω (J.1.dualMap φ₀) = -J.1 (contract ω φ₀) at hr
+      simp [hr] }
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:88 | HodgeLean.RealDefs.Compare.Markman.homologyEquiv_isometry   [main]
+/-- The transported Hermitian forms agree on every pair of vectors.
+Source: `dualForm_contract_contract` and the Rosati identity, roadmap §1.2. -/
+theorem homologyEquiv_isometry {ω : ⋀[ℚ]^2 V} (hω : IsNondegenerate ω)
+    (hR : IsRosatiSkew ω J.1)
+    (φ ψ : WithJ (Module.Dual ℚ V) (transposeAction J)) :
+    weilHermitian (dualForm hω) (negativeAction J) (dualForm_negative_skew J hω hR)
+        (homologyEquiv J hω hR φ) (homologyEquiv J hω hR ψ) =
+      weilHermitian (riemannForm ω) (transposeAction J) (riemannForm_skew J hR) φ ψ := by
+
+-- F3 | HodgeLean/RealDefs/Compare/MarkmanTransport.lean:106 | HodgeLean.RealDefs.Compare.Markman.homologyEquiv_gram   [main]
+/-- The Gram matrices agree entry by entry in bases carried by contraction.
+Source: `homologyEquiv_isometry`, roadmap §1.2, steps 3–4. -/
+theorem homologyEquiv_gram {ω : ⋀[ℚ]^2 V} (hω : IsNondegenerate ω)
+    (hR : IsRosatiSkew ω J.1) {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (b : Basis ι (QuadraticAlgebra ℚ a 0) (WithJ (Module.Dual ℚ V) (transposeAction J))) :
+    LinearMap.toMatrix₂ (b.map (homologyEquiv J hω hR)) (b.map (homologyEquiv J hω hR))
+      (weilHermitian (dualForm hω) (negativeAction J) (dualForm_negative_skew J hω hR)) =
+    LinearMap.toMatrix₂ b b
+      (weilHermitian (riemannForm ω) (transposeAction J) (riemannForm_skew J hR)) := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/GeometricPeriodNaturality.lean:16 | HodgeLean.Foundations.Program.G32Native.geometricPeriod_integral   [main]
+/-- The period equivalence intertwines integral geometric pullback and tangent transpose.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §1.2. -/
+theorem geometricPeriod_integral (f : AbelianEnd A) (w : ℂ ⊗[ℚ] HQ A 1) :
+    abelianPeriodComplexEquiv A ((abelianEndAction A f).baseChange ℂ w) =
+      (abelianPeriodComplexEquiv A w).comp
+        ((printedAnalyticAction A ((1 : ℚ) ⊗ₜ[ℤ] f)).restrictScalars ℝ) := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/GeometricPeriodNaturality.lean:41 | HodgeLean.Foundations.Program.G32Native.geometricPeriod_rational   [main]
+/-- Period naturality extends from integral to rational geometric endomorphisms.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §1.2. -/
+theorem geometricPeriod_rational (f : AbelianEnd0 A) (w : ℂ ⊗[ℚ] HQ A 1) :
+    abelianPeriodComplexEquiv A ((abelianEnd0Action A f).unop.baseChange ℂ w) =
+      (abelianPeriodComplexEquiv A w).comp
+        ((printedAnalyticAction A f).restrictScalars ℝ) := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/HolomorphicPeriodDual.lean:14 | HodgeLean.Foundations.Program.G32Native.holomorphicPeriodDual   [main]
+/-- Holomorphic cohomology in the actual period coordinates is the tangent dual.
+Source: Birkenhake–Lange, Complex Abelian Varieties, Theorem 1.4.1. -/
+def holomorphicPeriodDual : complexHolomorphicH1 A ≃ₗ[ℂ]
+    Module.Dual ℂ (Fin (dim A.left) → ℂ) :=
+  (show complexHolomorphicH1 A ≃ₗ[ℂ] degreeOneLatticeHolomorphic (dim A.left) from
+    { toFun := fun w => ⟨abelianPeriodComplexEquiv A w,
+        (show w.val ∈ (degreeOneLatticeHolomorphic (dim A.left)).comap
+          (abelianPeriodComplexEquiv A).toLinearMap from complexHolomorphicH1_eq A ▸ w.property)⟩
+      invFun := fun φ => ⟨(abelianPeriodComplexEquiv A).symm φ, by
+        rw [complexHolomorphicH1_eq]
+        change abelianPeriodComplexEquiv A ((abelianPeriodComplexEquiv A).symm φ.val) ∈ degreeOneLatticeHolomorphic (dim A.left)
+        rw [LinearEquiv.apply_symm_apply]
+        exact φ.property⟩
+      left_inv := fun w => Subtype.ext ((abelianPeriodComplexEquiv A).symm_apply_apply w)
+      right_inv := fun φ => Subtype.ext ((abelianPeriodComplexEquiv A).apply_symm_apply φ)
+      map_add' := fun _ _ => Subtype.ext (map_add _ _ _)
+      map_smul' := fun _ _ => Subtype.ext (map_smul _ _ _) }).trans
+    (holomorphicTangentDual (dim A.left)).symm
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizationDictionary.lean:38 | HodgeLean.Foundations.Program.G32Native.printed_polarization_reconstruction_aux   [main]
+/-- A rational homological Riemann form determines its degree-two cohomology class.
+Source: Birkenhake–Lange, Complex Abelian Varieties, §§1.3, 4.1–4.2;
+`p1_isPolarization_iff` and the exterior cohomology of a torus.
+The equality retains the homological form rather than introducing a scale or sign. -/
+theorem printed_polarization_reconstruction_aux (P : PrintedPolarizedTriple A) :
+    ∃ pol : HQ A 2,
+      ∃ hω : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol),
+        IsRosatiSkew (polarizationVec (torusCohomology_cupProductOf A) pol) P.W.J ∧
+        PolarizationPositive (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+          (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) hω ∧
+        riemannForm (polarizationVec (torusCohomology_cupProductOf A) pol) = P.E := by
+
+-- F3 | HodgeLean/Foundations/Program/G32Native/PrintedPolarizationDictionary.lean:72 | HodgeLean.Foundations.Program.G32Native.printed_polarization_dictionary   [main]
+/-- Printed-to-cohomological polarization dictionary, in rational homology coordinates.
+Source: G32 v0.18, Definition 2.1 and §2, lines 133–145; van Geemen, LNM 1594, §5.
+The geometric action induces `P.W`; the polarization class is constructed from `P.E`.
+The two named comparison steps above retain their separate proof obligations. -/
+theorem printed_polarization_dictionary (P : PrintedPolarizedTriple A)
+    (hdisc : P.discriminant = classNegTwo) :
+    ∃ pol : HQ A 2,
+      IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) P.W pol := by
+
+
+==================== F4 ====================
+
+-- F4 | HodgeLean/Adapters/AbelianCMData.lean:300 | HodgeLean.Adapters.spec_g4_pwActionRange_eq_adjoin   [main]
+/-- **Degenerate check `L = k`**: if `L = ℚ(u)`, the image of `L` in `Module.End ℚ (HQ A 1)` is
+`ℚ[J]`, `J = θ(u)^*`. So PW-0's statements at `R = Algebra.adjoin ℚ {J}`
+(`spec_pw0_gkLie_adjoin_eq`, `spec_pw0_cmPowerSpan_adjoin_eq`,
+`spec_pw0_rationalExteriorHodge_eq_cmPowerSpan`) apply to `R = pwActionRange A θ`.
+Source: PW v0.3, proof of Theorem 3.1, first paragraph (`L = k`); Mathlib
+`AlgHom.map_adjoin_singleton`. -/
+theorem spec_g4_pwActionRange_eq_adjoin (θ : L →ₐ[ℚ] AbelianEnd0 A) (u : L)
+    (hu : Algebra.adjoin ℚ {u} = ⊤) :
+    pwActionRange A θ = Algebra.adjoin ℚ {pwAction A θ u} :=
+
+-- F4 | HodgeLean/Adapters/PWTheorem42EisensteinProofs.lean:27 | HodgeLean.Adapters.f1_hodgeLieIsGk_iff_aux   [main]
+theorem f1_hodgeLieIsGk_iff_aux (θ : L →ₐ[ℚ] AbelianEnd0 A) (u : L)
+    (hu : u ^ 2 = -algebraMap ℚ L 3) (hL : Algebra.adjoin ℚ {u} = ⊤) (pol : HQ A 2)
+    (hη : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol))
+    (hRos : IsRosatiSkew (polarizationVec (torusCohomology_cupProductOf A) pol) (pwAction A θ u)) :
+    letI := (finiteBetti_abelian A).finite 1
+    HodgeLieIsGk (abelianWeightOneHodgeStructure A).H
+        (abelianWeightOneHodgeStructure A).isInternal
+        (polarizationForm (torusCohomology_cupProductOf A) hη) (pwActionRange A θ)
+        (pwAction A θ u) ↔
+      complexSpan (hodgeLieAlgebra (abelianWeightOneHodgeStructure A).H
+          (abelianWeightOneHodgeStructure A).isInternal).toSubmodule =
+        (complexSU (polarizationForm (torusCohomology_cupProductOf A) hη)
+          (nondegenerate_polarizationForm (torusCohomology_cupProductOf A) hη)
+          (f1_weilAction A θ u 3 hu).J (f1_weilAction A θ u 3 hu).J_sq
+          (polarizationForm_skew (torusCohomology_cupProductOf A) hη hRos)).toSubmodule := by
+
+-- F4 | HodgeLean/Adapters/PowersVocabulary.lean:98 | HodgeLean.Adapters.spec_pw0_hodgeLieIsGk_adjoin_iff   [main]
+/-- **(P3) at `L = k = ℚ(√-3)` is `hSU`.** By `spec_pw0_gkLie_adjoin_eq` and
+`spec_eqw_complexSpan_weilSU_eq_complexSU`, `HodgeLieIsGk` at `R = ℚ[J]` is the equality of
+`F1575MemberHodgeGroupIsSU`'s shape.
+Source: PW v0.3, proof of Theorem 3.1, first paragraph (`G_k(A) = SU(V,H)` at `e = 1`);
+`spec_eqw_complexSpan_weilSU_eq_complexSU` (`Foundations/EQWCore.lean`). -/
+theorem spec_pw0_hodgeLieIsGk_adjoin_iff (H : ℤ × ℤ → Submodule ℂ (ℂ ⊗[ℚ] V))
+    (hH : DirectSum.IsInternal H) (E : LinearMap.BilinForm ℚ V) (hE : E.Nondegenerate)
+    (hAlt : E.IsAlt) (J : Module.End ℚ V) (hJ : J.comp J = (-3 : ℚ) • LinearMap.id)
+    (hskew : ∀ x y, E (J x) y = -E x (J y)) :
+    HodgeLieIsGk H hH E (Algebra.adjoin ℚ {J}) J ↔
+      complexSpan (hodgeLieAlgebra H hH).toSubmodule =
+        (complexSU E hE J hJ hskew).toSubmodule :=
+
+-- F4 | HodgeLean/Foundations/HodgeGroupAlgebraic.lean:236 | HodgeLean.Foundations.g2_hodgeLieIsGk_of_eq   [main]
+/-- **The group form implies the Lie form**: `Hg = G_k` as point sets implies `HodgeLieIsGk`.
+Equal groups have equal Lie algebras; by `g2_lie_hodgeGroup` and `g2_lie_gkGroup` these are the
+complex spans of `hodgeLieAlgebra` and `gkLie`.
+Source: Borel, *Linear Algebraic Groups*, 2nd ed., §3.5; PW v0.3, Theorem 4.2, hypothesis
+`Hg(A) = G_k(A)`, and Remark 4.3. -/
+theorem g2_hodgeLieIsGk_of_eq (b : Module.Basis (Fin n) ℚ V)
+    (E : LinearMap.BilinForm ℚ V) (R : Subalgebra ℚ (Module.End ℚ V)) (J : Module.End ℚ V)
+    {d : ℚ} (hd : 0 < d) (hJ : J * J = (-d) • (1 : Module.End ℚ V))
+    (h : g2_hodgeGroup H hH b = g2_gkGroup b E R J d) : HodgeLieIsGk H hH E R J :=
+
+-- F4 | HodgeLean/Foundations/HodgeGroupAlgebraicDefs.lean:146 | HodgeLean.Foundations.g2_hodgeGroup   [main]
+/-- **The Hodge group, constructed.** The intersection of all `ℚ`-algebraic subgroups of
+`GL(V)` whose complex points contain `h(U(1))`, as a set of complex points in the basis `1 ⊗ b`.
+This is the smallest `ℚ`-algebraic subgroup through which `h|U(1)` factors.
+Source: Mumford, *Families of abelian varieties*, Proc. Sympos. Pure Math. 9 (1966), §1 (the
+Hodge group); Moonen, *An introduction to Mumford–Tate groups* (2004), §1–2 (`Hg(V)`, the
+smallest algebraic `ℚ`-subgroup whose real points contain `h(U(1))`). -/
+def g2_hodgeGroup (b : Module.Basis (Fin n) ℚ V) : Set (Matrix.GeneralLinearGroup (Fin n) ℂ) :=
+  ⋂₀ {G | g2_IsRatAlgSubgroup G ∧ g2_circleImage H hH b ⊆ G}
+
+-- F4 | HodgeLean/Foundations/HodgeGroupAlgebraicDefs.lean:228 | HodgeLean.Foundations.g2_gkGroup   [main]
+/-- **`G_k`, constructed by equations**: the complex zero set of `g2_gkEquations`.
+Source: PW v0.3, Subsection 2.3 (`G_k(A) = Lef(A) ∩ SL_k(V)`); Borel, *Linear Algebraic
+Groups*, 2nd ed., AG.11.3 (the `K`-points of a `k`-closed set). -/
+def g2_gkGroup (b : Module.Basis (Fin n) ℚ V) (E : LinearMap.BilinForm ℚ V)
+    (R : Subalgebra ℚ (Module.End ℚ V)) (J : Module.End ℚ V) (d : ℚ) :
+    Set (Matrix.GeneralLinearGroup (Fin n) ℂ) :=
+  g2_ratZeroSet (g2_gkEquations b E R J d)
+
+-- F4 | HodgeLean/Adapters/PowersVocabulary.lean:50 | HodgeLean.Adapters.spec_pw0_gkLie_adjoin_eq   [main]
+/-- **`G_k` at `L = k`.** For `R = ℚ[J]`, commuting with `R` is commuting with `J`, so `gkLie` is
+EQW's `weilSU E J`: at `e = 1`, `G_k(A) = SU(V, H)`.
+Source: PW v0.3, proof of Theorem 3.1, first paragraph (`L = k`, `G_k(A) = SU(V,H)`); `weilSU`
+(`Foundations/EQWCoreDefs.lean`). -/
+theorem spec_pw0_gkLie_adjoin_eq (E : LinearMap.BilinForm ℚ V) (J : Module.End ℚ V) :
+    gkLie E (Algebra.adjoin ℚ {J}) J = weilSU E J :=
+
+
+==================== F5 ====================
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIIFormDiagonalization.lean:17 | HodgeLean.Foundations.Program.G32Native.TypeIIIFormData   [main]
+/-- A skew-Hermitian form on quaternionic homology with its reduced trace
+polarization. Coordinates here need not be orthogonal.
+Source: G32 v0.18, section 8, line 689 and the preceding paragraph. -/
+structure TypeIIIFormData (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom]
+    [IsProjective A.hom] (pol : HQ A 2) where
+  b : ℚ
+  b_neg : b < 0
+  endomorphisms : ℍ[ℚ, -3, 0, b] ≃ₐ[ℚ] AbelianEnd0 A
+  coordinates : Dual ℚ (HQ A 1) ≃ₗ[ℚ] (Fin 3 → ℍ[ℚ, -3, 0, b])
+  action : ∀ q x i,
+    coordinates (((abelianEnd0Action A (endomorphisms q)).unop).dualMap x) i =
+      q * coordinates x i
+  T : (Fin 3 → ℍ[ℚ, -3, 0, b]) → (Fin 3 → ℍ[ℚ, -3, 0, b]) → ℍ[ℚ, -3, 0, b]
+  add_left : ∀ x y z, T (x + y) z = T x z + T y z
+  add_right : ∀ x y z, T x (y + z) = T x y + T x z
+  smul_left : ∀ (q : ℍ[ℚ, -3, 0, b]) x y, T (q • x) y = q * T x y
+  smul_right : ∀ (q : ℍ[ℚ, -3, 0, b]) x y, T x (q • y) = T x y * star q
+  skew : ∀ x y, T y x = -star (T x y)
+  regular : ∀ x, (∀ y, T x y = 0) → x = 0
+  nondegenerate : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol)
+  positive : PolarizationPositive (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+    (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) nondegenerate
+  trace : ∀ x y,
+    y (contract (polarizationVec (torusCohomology_cupProductOf A) pol) x) =
+      2 * (T (coordinates x) (coordinates y)).re
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIIFormDiagonalization.lean:46 | HodgeLean.Foundations.Program.G32Native.TypeIIIFormData.diagonal   [main]
+/-- Diagonalize the supplied form using its selected orthogonal basis.
+Source: G32 v0.18, section 8, lines 688–689 (quaternionic Gram–Schmidt). -/
+def TypeIIIFormData.diagonal (F : TypeIIIFormData A pol) : TypeIIISixfoldData A pol := by
+  classical
+  letI := typeIIIQuaternionDivisionRing F.b F.b_neg
+  have hex := typeIII_skew_orthogonal_basis F.b F.b_neg 3 F.T
+    F.add_left F.add_right F.smul_left F.smul_right F.skew F.regular
+    (by simp [Module.finrank_pi_fintype])
+  let eD := Classical.choose hex
+  have horth := (Classical.choose_spec hex).1
+  have hdiag := (Classical.choose_spec hex).2
+  let e := F.coordinates.trans (eD.equivFun.restrictScalars ℚ)
+  let t := fun i => F.T (eD i) (eD i)
+  have ht (i) : (t i).re = 0 := by
+    have h := congrArg QuaternionAlgebra.re (F.skew (eD i) (eD i))
+    simp only [QuaternionAlgebra.re_neg, QuaternionAlgebra.re_star, zero_mul, add_zero] at h
+    change (t i).re = -(t i).re at h
+    linarith
+  let l1 := fun i => (t i).imI
+  let l2 := fun i => (t i).imJ
+  let l3 := fun i => (t i).imK
+  have htEntry (i) : (⟨0, l1 i, l2 i, l3 i⟩ : ℍ[ℚ, -3, 0, F.b]) = t i := by
+    ext
+    · exact (ht i).symm
+    · rfl
+    · rfl
+    · rfl
+  refine { b := F.b, b_neg := F.b_neg, endomorphisms := F.endomorphisms
+           pullback := abelianEnd0Action A, pullback_integral := ?_
+           homology := e, homology_action := ?_
+           l1 := l1, l2 := l2, l3 := l3, diagonal_nonzero := ?_
+           nondegenerate := F.nondegenerate, positive := F.positive, trace_eq := ?_ }
+  · intro f
+    simpa only [one_smul] using spec_g4_abelianEnd0Action_tmul A 1 f
+  · intro q x i
+    have heq : F.coordinates (((abelianEnd0Action A (F.endomorphisms q)).unop).dualMap x) =
+        q • F.coordinates x := by
+      funext j
+      exact F.action q x j
+    change eD.equivFun (F.coordinates (((abelianEnd0Action A (F.endomorphisms q)).unop).dualMap x)) i = _
+    rw [heq, map_smul]
+    rfl
+  · intro i hz
+    apply hdiag i
+    apply (typeIIIQuaternionNorm_eq_zero F.b F.b_neg (t i)).1
+    have hz' : -3 * (t i).imI ^ 2 + F.b * (t i).imJ ^ 2 + 3 * F.b * (t i).imK ^ 2 = 0 := hz
+    change (t i).re ^ 2 + 3 * (t i).imI ^ 2 - F.b * (t i).imJ ^ 2 -
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIIFormDiscriminant.lean:49 | HodgeLean.Foundations.Program.G32Native.TypeIIIFormData.discriminantClass_eq   [main]
+/-- The selected diagonal product represents the intrinsic class of the form. -/
+theorem TypeIIIFormData.discriminantClass_eq (F : TypeIIIFormData A pol) :
+    F.discriminantClass =
+      (F.diagonal.discriminantUnit : ℚˣ ⧸ normSubgroup (QuadraticAlgebra ℚ (-3) 0)) := by
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIIFormDiscriminant.lean:56 | HodgeLean.Foundations.Program.G32Native.TypeIIIFormData.discriminantClass_eq_presentation   [main]
+/-- Any diagonal presentation of the same trace polarization and generator
+has the same class; its orthogonal basis and three entries may vary. -/
+theorem TypeIIIFormData.discriminantClass_eq_presentation (F : TypeIIIFormData A pol)
+    (Q : TypeIIISixfoldData A pol)
+    (hJ : Q.inducedWeilAction.J = (abelianEnd0Action A (F.endomorphisms
+      (⟨0, 1, 0, 0⟩ : ℍ[ℚ, -3, 0, F.b]))).unop) :
+    F.discriminantClass =
+      (Q.discriminantUnit : ℚˣ ⧸ normSubgroup (QuadraticAlgebra ℚ (-3) 0)) := by
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIIFormDiscriminantNorm.lean:24 | HodgeLean.Foundations.Program.G32Native.TypeIIISixfoldData.diagonal_product_ratio_mem_norm   [main]
+/-- With the quaternion parameter fixed, the ratio of products of the three
+pure quaternion squares is a norm. The common factor −b cancels. -/
+theorem TypeIIISixfoldData.diagonal_product_ratio_mem_norm
+    (Q R : TypeIIISixfoldData A pol) (hb : Q.b = R.b)
+    (hJ : Q.inducedWeilAction.J = R.inducedWeilAction.J) :
+    (∏ i, Units.mk0 (-3 * Q.l1 i ^ 2 + Q.b * Q.l2 i ^ 2 +
+        3 * Q.b * Q.l3 i ^ 2) (Q.diagonal_nonzero i)) /
+      (∏ i, Units.mk0 (-3 * R.l1 i ^ 2 + R.b * R.l2 i ^ 2 +
+        3 * R.b * R.l3 i ^ 2) (R.diagonal_nonzero i)) ∈
+      normSubgroup (QuadraticAlgebra ℚ (-3) 0) := by
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIISixfold.lean:52 | HodgeLean.Foundations.Program.G32Native.typeIII_member_of_discriminant   [main]
+/-- The norm-class hypothesis in Corollary 8.2 supplies the exact Theorem A
+membership predicate, on the same action and polarization.
+Source: G32 v0.16, Corollary 8.2, first clause, and Lemma 8.1. -/
+theorem typeIII_member_of_discriminant (Q : TypeIIISixfoldData A pol)
+    (hdisc : (Q.discriminantUnit : ℚˣ ⧸ normSubgroup (QuadraticAlgebra ℚ (-3) 0)) =
+      classNegTwo) :
+    IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+      (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A)
+      (typeIIIWeilAction Q) pol := by
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIISixfoldData.lean:22 | HodgeLean.Foundations.Program.G32Native.TypeIIISixfoldData   [main]
+/-- A diagonal quaternionic homology presentation of the polarized variety in
+Lemma 8.1. The action is the actual rational endomorphism pullback, retained on
+integral endomorphisms. The trace equation is on homology, the dual of `HQ A 1`.
+No Weil-type or discriminant comparison is a field of these data.
+Source: G32 v0.16, section 8, paragraph before Lemma 8.1;
+Birkenhake–Lange, Complex Abelian Varieties, second edition, sections 5.2, 9.4–9.6. -/
+structure TypeIIISixfoldData (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom]
+    [IsProjective A.hom] (pol : HQ A 2) where
+  b : ℚ
+  b_neg : b < 0
+  endomorphisms : ℍ[ℚ, -3, 0, b] ≃ₐ[ℚ] AbelianEnd0 A
+  pullback : AbelianEnd0 A →ₐ[ℚ] (Module.End ℚ (HQ A 1))ᵐᵒᵖ
+  pullback_integral : ∀ f, pullback (1 ⊗ₜ f) = MulOpposite.op (abelianEndAction A f)
+  homology : Module.Dual ℚ (HQ A 1) ≃ₗ[ℚ] (Fin 3 → ℍ[ℚ, -3, 0, b])
+  homology_action : ∀ q x i,
+    homology (((pullback (endomorphisms q)).unop).dualMap x) i = q * homology x i
+  l1 : Fin 3 → ℚ
+  l2 : Fin 3 → ℚ
+  l3 : Fin 3 → ℚ
+  diagonal_nonzero : ∀ i, (-3 * l1 i ^ 2 + b * l2 i ^ 2 + 3 * b * l3 i ^ 2) ≠ 0
+  nondegenerate : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol)
+  positive : PolarizationPositive (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+    (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) nondegenerate
+  trace_eq : ∀ x y,
+    y (contract (polarizationVec (torusCohomology_cupProductOf A) pol) x) =
+      2 * (∑ i, homology x i *
+        (⟨0, l1 i, l2 i, l3 i⟩ : ℍ[ℚ, -3, 0, b]) * star (homology y i)).re
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIISixfoldData.lean:57 | HodgeLean.Foundations.Program.G32Native.TypeIIISixfoldData.discriminantUnit_val   [main]
+/-- The scalar value of the retained quaternionic discriminant representative. -/
+theorem TypeIIISixfoldData.discriminantUnit_val (Q : TypeIIISixfoldData A pol) :
+    (Q.discriminantUnit : ℚ) = -Q.b *
+      ∏ i, (-3 * Q.l1 i ^ 2 + Q.b * Q.l2 i ^ 2 + 3 * Q.b * Q.l3 i ^ 2) := by
+
+-- F5 | HodgeLean/Foundations/Program/G32Native/TypeIIISkewDiagonalVector.lean:9 | HodgeLean.Foundations.Program.G32Native.typeIII_skew_exists_diagonal   [main]
+/-- A nondegenerate quaternion skew-Hermitian form on a nonzero module has
+a vector with nonzero diagonal value. -/
+theorem typeIII_skew_exists_diagonal (b : ℚ)
+    {V : Type*} [AddCommGroup V] [Module ℍ[ℚ, -3, 0, b] V] [Nontrivial V]
+    (H : V → V → ℍ[ℚ, -3, 0, b])
+    (haddL : ∀ x x' y, H (x + x') y = H x y + H x' y)
+    (haddR : ∀ x y y', H x (y + y') = H x y + H x y')
+    (hsmul : ∀ (q : ℍ[ℚ, -3, 0, b]) x y, H (q • x) y = q * H x y)
+    (hskew : ∀ x y, H y x = -star (H x y))
+    (hnd : ∀ x, (∀ y, H x y = 0) → x = 0) :
+    ∃ x, H x x ≠ 0 := by
+
+
+==================== F6 ====================
+
+-- F6 | HodgeLean/Adapters/AbelianCMDataDefs.lean:134 | HodgeLean.Adapters.AbelianPowerData   [main]
+/-- **Power data**: an abelian `Y` with `r` group homomorphisms `p_i : Y ⟶ A` and `s_i : A ⟶ Y`
+satisfying the biproduct identities `p_j ∘ s_i = δ_ij` (`1` is the zero homomorphism, the
+constant map to the identity point) and `Σ_i s_i ∘ p_i = 𝟙 Y` (sum in the group `Y ⟶ Y`). The
+power `A^r` with its projections and inclusions is the intended instance; it is not built here.
+Source: PW v0.3, Theorem 4.2 (the powers `A^r`); Mac Lane, *Categories for the Working
+Mathematician*, §VIII.2 (biproducts in additive categories); Mumford, *Abelian Varieties*, §19
+(the category of abelian varieties is additive). -/
+structure AbelianPowerData (A Y : Over (Spec ↧ℂ)) [GrpObj A] [GrpObj Y] [IsCommMonObj Y]
+    (r : ℕ) where
+  /-- The projections `p_i : Y ⟶ A`. -/
+  proj : Fin r → (Y ⟶ A)
+  /-- The inclusions `s_i : A ⟶ Y`. -/
+  incl : Fin r → (A ⟶ Y)
+  proj_isMonHom : ∀ i, IsMonHom (proj i)
+  incl_isMonHom : ∀ i, IsMonHom (incl i)
+  /-- `p_j ∘ s_i = δ_ij`. -/
+  incl_proj : ∀ i j, incl i ≫ proj j = if i = j then 𝟙 A else 1
+  /-- `Σ_i s_i ∘ p_i = 𝟙 Y`. -/
+  sum_proj_incl : ∏ i, (proj i ≫ incl i) = 𝟙 Y
+
+-- F6 | HodgeLean/Adapters/AbelianPower.lean:138 | HodgeLean.Adapters.g3_powerData   [main]
+/-- **The power data of `A^r`**: `p_i = g3_proj A r i`, `s_i = g3_incl A r i`, with S3–S6. It
+needs no scheme property of `A`.
+Source: PW v0.3, Theorem 4.2 (the powers `A^r`); `spec_g3_isMonHom_proj`,
+`spec_g3_isMonHom_incl`, `spec_g3_incl_proj`, `spec_g3_prod_proj_incl`. -/
+def g3_powerData [IsCommMonObj A] (r : ℕ) : AbelianPowerData A (g3_power A r) r where
+  proj := g3_proj A r
+  incl := g3_incl A r
+  proj_isMonHom := spec_g3_isMonHom_proj A r
+  incl_isMonHom := spec_g3_isMonHom_incl A r
+  incl_proj := spec_g3_incl_proj A r
+  sum_proj_incl := spec_g3_prod_proj_incl A r
+
+-- F6 | HodgeLean/Adapters/AbelianPowerDefs.lean:37 | HodgeLean.Adapters.g3_power   [main]
+/-- **The power `A^r`**: the `r`-fold iterated cartesian product in `Over (Spec ℂ)`,
+`A^0 = 𝟙_ = Spec ℂ` and `A^(r+1) = A ⊗ A^r = A ×_ℂ A^r`.
+Source: Mumford, *Abelian Varieties*, §4 (products of abelian varieties); Mathlib
+`Over.cartesianMonoidalCategory`, `Over.tensorObj_left` (the tensor product in `Over X` is the
+fibre product over `X`). -/
+def g3_power : ℕ → Over (Spec ↧ℂ)
+  | 0 => 𝟙_ (Over (Spec ↧ℂ))
+  | n + 1 => A ⊗ g3_power n
+
+-- F6 | HodgeLean/Papers/SkeletonG32Defs.lean:28 | HodgeLean.Papers.G32TheoremAStatement   [main]
+/-- **G32 Theorem A, as a statement.** Membership includes dimension six, Weil type,
+positive polarization and Hermitian discriminant class `[-2]`. Its proof needs the family,
+period-map dominance and spreading constructions.
+Source: G32 v0.16, Theorem A and Theorem 7.2. -/
+def G32TheoremAStatement
+    (W : letI := (torusCohomology_cupProductOf A).finite
+      HodgeBlocks.WeilAction
+        (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+          (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+          (torusCohomology_cupProductOf A)).weight1 3)
+    (pol : HQ A 2) : Prop :=
+  ∀ (hM : IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+      (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) W pol),
+    WeilClassesAlgebraic (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+      (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) W hM.isWeilType
+
+-- F6 | HodgeLean/RealDefs/WeilClasses.lean:231 | HodgeLean.RealDefs.WeilClassesAlgebraic   [main]
+/-- **The rational Weil classes of `X` are algebraic** (F-1569's claim for one `X`): every element of
+`weilClassOf A hW` lies in `algebraicCycleClassSpan X k`. It is about **every** rational Weil class
+of the action `A`, not one chosen class, and not every Hodge class of `X`.
+
+F-1569's claim is this statement when `(X, A)` is a member of `M = (3, ℚ(√−3), [−2])` with
+its `ℚ(√−3)`-action; for any other `X` or action it is not F-1569.
+
+`A` is a Weil action on `H¹(X(ℂ); ℚ)`: a rational endomorphism of `H¹` preserving the Hodge
+pieces, which is `End⁰(X)` acting on `H¹` (Birkenhake–Lange, Ch. 1); that identification is not
+formalized.
+
+**This is stated, not proved; nothing in this repository proves it.** It is a definition, used as a
+premise: every theorem that takes it says so in its hypothesis table.
+[Packet note, 2026-11-14: this docstring predates G32's final statements and is stale. On main, `g32_c3_final_corollary82_first` and its wrappers conclude `WeilClassesAlgebraic` for members of M with the type III data; the definition itself is unchanged.]
+
+`A` is a Weil action on `H¹(X(ℂ); ℚ)`: a rational endomorphism of `H¹` that preserves the Hodge
+pieces. Such endomorphisms are exactly `End⁰(X)` acting on `H¹` (Birkenhake–Lange, *Complex Abelian
+Varieties*, 2nd ed., Grundlehren 302, Ch. 1); that identification is not formalized. -/
+def WeilClassesAlgebraic (hF : FiniteBetti X) (hB : BettiDeRhamIso X)
+    (hD : HodgeDecomposition X) (hT : TorusCohomology μ) {d : ℚ}
+    (A : letI := hT.finite
+      HodgeBlocks.WeilAction (abelianVarietyCohomologyOf hF hB hD hT).weight1 d)
+    (hW : letI := hT.finite; A.IsWeilType) : Prop :=
+  letI := hT.finite
+  weilClassOf hF hB hD hT A hW ≤ algebraicCycleClassSpan X (Module.finrank ℂ
+    ↥(A.Vs ⊓ (abelianVarietyCohomologyOf hF hB hD hT).weight1.H (1, 0)))
+
+-- F6 | HodgeLean/Foundations/Program/G32Native/G32SelectedTheoremAProofsSpec.lean:23 | HodgeLean.Foundations.Program.g32a_theoremA_selected_aux_spec   [main]
+theorem g32a_theoremA_selected_aux_spec (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (W : letI := (torusCohomology_cupProductOf A).finite
+      HodgeBlocks.WeilAction
+        (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+          (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+          (torusCohomology_cupProductOf A)).weight1 3)
+    (pol : HQ A 2) :
+    let f := fun k : Fin 12 ↦ Classical.choose (rou_b65b_isolating_boxes k)
+    let p := Function.extend b65b_boxIndex f 0
+    let hp : ∀ k : Fin 12,
+      |(p (b65b_boxIndex k)).re - ((b65b_boxCentre k).1 : ℝ)| < (1/10000 : ℝ) ∧
+      |(p (b65b_boxIndex k)).im - ((b65b_boxCentre k).2 : ℝ)| < (1/10000 : ℝ) ∧
+      b65r_P (b65b_boxFibre k) (p (b65b_boxIndex k)) = 0 := by
+
+-- F6 | .lake/packages/HodgeConjecture/HodgeConjecture/Definitions/AlgebraicGeometry/Cycle/FundamentalClass.lean:98 | AlgebraicGeometry.ComplexPoint.algebraicCycleClassSpan
+(upstream package source; see the elaborated output in the repository file)
+
+-- F6 | .lake/packages/HodgeConjecture/HodgeConjecture/Definitions/AlgebraicGeometry/Hodge/Filtration.lean:917 | AlgebraicGeometry.ComplexPoint.hodgeClasses
+(upstream package source; see the elaborated output in the repository file)
+
+
+==================== Supplier ====================
+
+-- Supplier | HodgeLean/Foundations/Program/G32PropFourSixIntegration.lean:112 | HodgeLean.Foundations.Program.g32p_integration_comparison   [main]
+theorem g32p_integration_comparison
+    (remainingSupplierRows : ∀ i : Fin 51,
+      i.val + 1 ∈ ([13, 14, 15] : List ℕ) →
+      ∃ r ∈ g32WitnessTable, r.i = i.val + 1 ∧
+        r.m = (g32p_recordedSuppliers i).m ∧
+        r.orderH = Nat.card (g32p_recordedSuppliers i).H ∧
+        (g32p_exponents (g32p_recordedSuppliers i)).Perm (expandExps r.exps)) :
+    ∃ (S : Fin 51 → g32p_Supplier) (χc : ∀ i, (S i).H →* ℂˣ)
+      (τ τbar : Fin 44 → FDRep ℂ g32p_G) (θ : Fin 4 → FDRep ℂ g32p_G),
+      (∀ j, Simple (τ j) ∧ Simple (τbar j) ∧ ¬ g32p_SelfDual (τ j) ∧
+        (∀ g, (τbar j).character g = star ((τ j).character g)) ∧ 0 < g32p_cwMult (τ j)) ∧
+      (∀ j, Simple (θ j) ∧ g32p_Quaternionic (θ j) ∧ 0 < g32p_cwMult (θ j)) ∧
+      (∀ j k, j ≠ k → IsEmpty (τ j ≅ τ k) ∧ IsEmpty (τ j ≅ τbar k)) ∧
+      (∀ j k : Fin 4, j ≠ k → IsEmpty (θ j ≅ θ k)) ∧
+      Nonempty (τ 2 ≅ g32p_rho) ∧
+      (∀ σ : FDRep ℂ g32p_G, Simple σ → 0 < g32p_cwMult σ →
+        (¬ g32p_SelfDual σ → ∃ j, Nonempty (σ ≅ τ j) ∨ Nonempty (σ ≅ τbar j)) ∧
+        (g32p_Quaternionic σ → ∃ j, Nonempty (σ ≅ θ j))) ∧
+      ∀ i : Fin 51,
+        (∀ h, ((χc i h : ℂˣ) : ℂ) =
+          g32p_root (S i).m ^ (Multiplicative.toAdd ((S i).χ h)).val) ∧
+        (∃ r ∈ g32WitnessTable, r.i = i.val + 1 ∧ r.m = (S i).m ∧
+          r.orderH = Nat.card (S i).H ∧ (g32p_exponents (S i)).Perm (expandExps r.exps)) ∧
+        ∃ v ∈ g32VectorTable, v.i = i.val + 1 ∧
+          papersA τ τbar θ (S i).H (χc i) = g32SparseVec v.coords := by
+
+
+==================== SupplierCharacter ====================
+
+-- SupplierCharacter | HodgeLean/Foundations/Program/G32PropFourSixCharacterCertificates.lean:112 | HodgeLean.Foundations.Program.g32p_characterCertificate_table   [main]
+theorem g32p_characterCertificate_table (i : Fin 51) :
+    ∃ v ∈ g32VectorTable, v.i = i.val + 1 ∧
+      g32SparseVec v.coords = g32p_characterCertificateCoordinates i := by

@@ -1,0 +1,82 @@
+/-
+Licensed under Apache-2.0; see HodgeLean/Ported/NYLL/LICENSE.
+Source repository: https://github.com/n-yamaguchi-0729/NYLL
+Source commit: 21896ca9a10770a5ae31421357b003e76d06c965
+Modifications: relocated local module imports and capped heartbeat options.
+-/
+/-
+Copyright (c) 2026 Naganori Yamaguchi (https://github.com/n-yamaguchi-0729). All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Naganori Yamaguchi (assisted by OpenAI Codex)
+-/
+
+module
+
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.FiniteType.FiniteTypeLocality
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Frames.Frames
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Invertible.Invertible
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Tensor.InvertibleExactness
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Tensor.Monoidal
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Tensor.TensorFrameTrivialization
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Tensor.TensorPowerFrames
+public import HodgeLean.Ported.NYLL.SchemeTheory.Modules.Tensor.TensorPowers
+public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Generators
+public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Quasicoherent
+public import Mathlib.AlgebraicGeometry.Modules.Sheaf
+public import Mathlib.CategoryTheory.Sites.LeftExact
+public import Mathlib.Topology.Sets.Opens
+
+/-!
+# Quasicoherence and finite type after an actual invertible twist
+
+The original local trivializations of an invertible sheaf give frames,
+and their actual tensor powers trivialize every nonnegative twist. The
+native tensor-section isomorphisms identify the twisted sheaf with the
+original sheaf on those slice sites. Locality then transports actual
+quasicoherent presentations and finite local generating families.
+
+No separate quasicoherence or flatness assumption on the invertible
+sheaf, and no Noetherian hypothesis on the scheme, is needed.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u
+
+open CategoryTheory MonoidalCategory TopologicalSpace
+
+namespace AlgebraicGeometry.Scheme.Modules
+
+variable {X : Scheme.{u}} {L : X.Modules} (M : X.Modules)
+
+/-- Actual invertible tensor powers preserve the original quasicoherent local presentations. -/
+theorem IsInvertible.isQuasicoherent_tensorPow (hL : IsInvertible L)
+    [SheafOfModules.IsQuasicoherent (R := X.ringCatSheaf) M] (d : ℕ) :
+    SheafOfModules.IsQuasicoherent (R := X.ringCatSheaf)
+      (tensor (X := X) M (L.tensorPow d)) := by
+  obtain ⟨U, s, hs, hcover⟩ := hL.exists_frame_cover
+  have hlocal : ∀ x : X,
+      SheafOfModules.IsQuasicoherent (R := X.ringCatSheaf.over (U x))
+        ((tensor (X := X) M (L.tensorPow d)).over (U x)) :=
+    fun x => IsFrameOn.isQuasicoherent_tensor_over M
+      ((hs x).tensorPowSection_monoidalV2 d) le_rfl
+  exact SheafOfModules.IsQuasicoherent.of_coversTop
+    (R := X.ringCatSheaf) (tensor (X := X) M (L.tensorPow d)) U
+    ((Opens.coversTop_iff X U).mpr hcover)
+
+/-- Actual invertible tensor powers preserve the original finite local generating families. -/
+theorem IsInvertible.isFiniteType_tensorPow (hL : IsInvertible L)
+    [SheafOfModules.IsFiniteType (R := X.ringCatSheaf) M] (d : ℕ) :
+    SheafOfModules.IsFiniteType (R := X.ringCatSheaf)
+      (tensor (X := X) M (L.tensorPow d)) := by
+  obtain ⟨U, s, hs, hcover⟩ := hL.exists_frame_cover
+  apply SheafOfModules.IsFiniteType.of_coversTop
+    (R := X.ringCatSheaf) (tensor (X := X) M (L.tensorPow d)) U
+    ((Opens.coversTop_iff X U).mpr hcover)
+  intro x
+  exact IsFrameOn.isFiniteType_tensor_over M
+    ((hs x).tensorPowSection_monoidalV2 d) le_rfl
+
+end AlgebraicGeometry.Scheme.Modules

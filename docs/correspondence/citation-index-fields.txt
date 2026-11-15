@@ -1,0 +1,23 @@
+Field and projection rows: citation | parent type from the binder | resolution
+A.hom | Over | dropped: parent structure's quoted block has no field line hom
+hM.dim_eq | IsMemberOfM | field line definitions-r3.txt:69
+W.J | WeilAction | field line definitions-r3.txt:96
+PrintedPolarizedTriple.action | PrintedPolarizedTriple | field line definitions-r9.txt:1113
+hM.nondegenerate | IsMemberOfM | field line definitions-r3.txt:71
+hM.rosati | IsMemberOfM | field line definitions-r3.txt:72
+hM.positive | IsMemberOfM | field line definitions-r3.txt:73
+hM.datum | IsMemberOfM | field line definitions-r3.txt:74
+PrintedPolarizedTriple.E | PrintedPolarizedTriple | field line definitions-r9.txt:1119
+P.discriminant | PrintedPolarizedTriple | declaration HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.discriminant
+P.W | PrintedPolarizedTriple | declaration HodgeLean.Foundations.Program.G32Native.PrintedPolarizedTriple.W
+Q.nondegenerate | TypeIIISixfoldData | field line definitions-r9.txt:1423
+Q.positive | TypeIIISixfoldData | field line definitions-r9.txt:1424
+Q.discriminantUnit | TypeIIISixfoldData | declaration HodgeLean.Foundations.Program.G32Native.TypeIIISixfoldData.discriminantUnit
+Q.b | TypeIIISixfoldData | field line definitions-r9.txt:1411
+F.discriminantClass | TypeIIIFormData | declaration HodgeLean.Foundations.Program.G32Native.TypeIIIFormData.discriminantClass
+F.diagonal | TypeIIIFormData | declaration HodgeLean.Foundations.Program.G32Native.TypeIIIFormData.diagonal
+F.hodgeGroup | PELSplitFamily | declaration HodgeLean.Foundations.Program.GeneralTypeIII.PELSplitFamily.hodgeGroup
+F.genericGroup | PELSplitFamily | declaration HodgeLean.Foundations.Program.GeneralTypeIII.PELSplitFamily.genericGroup
+RealDefs.TorusCohomology.finite | TorusCohomology | field line definitions-r9.txt:3406
+RealDefs.FiniteBetti.finite | FiniteBetti | field line definitions-r9.txt:3425
+A.weilClasses | Over | dropped: parent structure's quoted block has no field line weilClasses

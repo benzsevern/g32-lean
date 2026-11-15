@@ -1,0 +1,160 @@
+import HodgeLean.Foundations.Program.G32Native.JointProjectiveNormalGerms
+import HodgeLean.Foundations.TubularEuler.RetainedConormalRankHelpers
+import HodgeLean.Foundations.TubularEuler.NormalPatchGluing
+import HodgeLean.Foundations.TubularEuler.QuasiProjectiveImmersion
+import HodgeLean.Foundations.TubularEuler.TubeNormalization
+
+/-! # Tubes from a specified quasi-projective presentation
+
+The metric comes from the restricted projector. The general tube theorems retain
+their original interfaces and are not used in this assembly.
+HC no distance; AV milestone no distance. -/
+
+open HodgeLean.Foundations.TubularEuler HodgeLean.Foundations.BundleThom
+open scoped Manifold ContDiff
+
+noncomputable section
+set_option maxHeartbeats 400000
+set_option maxRecDepth 2048
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.types false
+open CategoryTheory AlgebraicGeometry TopologicalSpace Bundle AlgebraicTopology.Singular
+open HodgeLean.Foundations.Program HodgeLean.Adapters
+namespace HodgeLean.Foundations.TubularEuler
+open BundleThom
+
+variable {Q W : Over (Spec ↧ℂ)} [IsIntegral Q.left]
+variable [LocallyOfFiniteType W.hom] [QuasiCompact W.hom] [IsSeparated W.hom]
+variable (ι : Q ⟶ W) [IsClosedImmersion ι.left] (k : ℕ)
+variable {V : Scheme} (v : V ⟶ W.left) [IsOpenImmersion v]
+variable (j : Q.left ⟶ V) [IsClosedImmersion j] (hj : j ≫ v = ι.left)
+variable [SmoothOfRelativeDimension k Q.hom]
+variable [SmoothOfRelativeDimension (k + k) (v ≫ W.hom)]
+variable [CompactSpace (ComplexPoint Q)] [T2Space (ComplexPoint Q)]
+
+private local instance normalFibreTop (x : ComplexPoint Q) :
+    TopologicalSpace (i1_normalFibre j x) := i1_normalFibreTopology j x
+private local instance normalTotalTop :
+    TopologicalSpace (TotalSpace (Fin k → ℂ) (i1_normalFibre j)) :=
+  i1_normalTotalTopology j k
+
+/-- Construct a radial tube using the metric of the specified quasi-projective immersion.
+Source: Lee, Introduction to Smooth Manifolds, second edition, Theorem 6.24;
+Griffiths–Harris, Principles of Algebraic Geometry, chapter 1, section 2.
+HC no distance; AV milestone no distance. -/
+theorem joint_projective_normal_tube_exists
+    (hNormalField : ∀ {Q W : Over (Spec ↧ℂ)} [IsIntegral Q.left]
+      [LocallyOfFiniteType Q.hom] [QuasiCompact Q.hom] [IsSeparated Q.hom]
+      [LocallyOfFiniteType W.hom] [QuasiCompact W.hom] [IsSeparated W.hom]
+      (ι : Q ⟶ W) [IsClosedImmersion ι.left] (k : ℕ)
+      {V : Scheme} (v : V ⟶ W.left) [IsOpenImmersion v]
+      (j : Q.left ⟶ V) [IsClosedImmersion j] (hj : j ≫ v = ι.left)
+      [SmoothOfRelativeDimension k Q.hom]
+      [SmoothOfRelativeDimension (k + k) (v ≫ W.hom)],
+    letI : IsClosedImmersion (i1_smoothLift ι v j hj).left := by
+      change IsClosedImmersion j
+      infer_instance
+    letI : SmoothOfRelativeDimension (k + k) (Over.mk (v ≫ W.hom)).hom :=
+      ‹SmoothOfRelativeDimension (k + k) (v ≫ W.hom)›
+    ∀ (hD : ∀ (A : V.Opens) (hA : IsAffineOpen A) (x : ComplexPoint Q)
+      (hx : x ∈ Point.overOpen (j ⁻¹ᵁ A)) (z : ComplexPoint (Over.mk (v ≫ W.hom)))
+      (hz : Point.map (i1_smoothLift ι v j hj) x ∈ (chartAt (Fin (k + k) → ℂ) z).source),
+      Function.Injective (retainedAffineConormalDifferential (Over.mk (v ≫ W.hom)) Q (i1_smoothLift ι v j hj) (k + k) A hA x hx z hz) ∧
+      Module.finrank ℂ (LinearMap.range
+        (retainedAffineConormalDifferential (Over.mk (v ≫ W.hom)) Q (i1_smoothLift ι v j hj) (k + k) A hA x hx z hz)) = k)
+    (g : ChartHermitianMetric (ComplexPoint (Over.mk (v ≫ W.hom))) (k + k)) (n : ℕ)
+    (emb : ComplexPoint (Over.mk (v ≫ W.hom)) → EuclideanSpace ℝ (Fin n))
+    (hemb : ContMDiff 𝓘(ℝ, Fin (k + k) → ℂ) 𝓘(ℝ, EuclideanSpace ℝ (Fin n)) ω emb),
+    Nonempty (RetainedEuclideanNormalField ι k v j hj n emb g))
+    (nP : ℕ) (e : W ⟶ Over.mk (ProjectiveSpace.toBase (Fin (nP+1)) (Spec ↧ℂ)))
+    [IsImmersion e.left] : Nonempty (SmoothNormalTube ι k v j hj) := by
+  letI : LocallyOfFiniteType Q.hom := by rw [← Over.w ι]; infer_instance
+  letI : QuasiCompact Q.hom := by rw [← Over.w ι]; infer_instance
+  letI : IsSeparated Q.hom := by rw [← Over.w ι]; infer_instance
+  letI : SmoothOfRelativeDimension (k+k) (Over.mk (v ≫ W.hom)).hom :=
+    ‹SmoothOfRelativeDimension (k+k) (v ≫ W.hom)›
+  letI : IsClosedImmersion (i1_smoothLift ι v j hj).left :=
+    inferInstanceAs (IsClosedImmersion j)
+  obtain ⟨U, m, hzero, hmzero, ⟨patch⟩, hcompat⟩ :=
+    joint_projective_normal_coordinate_germs ι k v j hj hNormalField
+      (by
+        intro A hA x hx z hz
+        exact retainedAffineConormalDifferential_rank
+          (Over.mk (v ≫ W.hom)) Q (i1_smoothLift ι v j hj) k A hA x hx z hz) nP e
+  let n := local_normal_map_of_compatible_patches ι k v j hj U m hzero hmzero patch hcompat
+  obtain ⟨t, _⟩ := compact_normal_map_shrinking_aux ι k v j hj (Classical.choice n)
+  exact ⟨t⟩
+
+/-- Oriented tubular transport of the supplied normalized immersion class.
+Source: Bott–Tu, Differential Forms in Algebraic Topology, §6, tubular neighbourhood
+and Thom class; Fulton, Intersection Theory, §6.3, algebraic analogue.
+HC no distance; AV milestone no distance. -/
+theorem joint_projective_tubular_support_comparison
+    (hNormalField : ∀ {Q W : Over (Spec ↧ℂ)} [IsIntegral Q.left]
+      [LocallyOfFiniteType Q.hom] [QuasiCompact Q.hom] [IsSeparated Q.hom]
+      [LocallyOfFiniteType W.hom] [QuasiCompact W.hom] [IsSeparated W.hom]
+      (ι : Q ⟶ W) [IsClosedImmersion ι.left] (k : ℕ)
+      {V : Scheme} (v : V ⟶ W.left) [IsOpenImmersion v]
+      (j : Q.left ⟶ V) [IsClosedImmersion j] (hj : j ≫ v = ι.left)
+      [SmoothOfRelativeDimension k Q.hom]
+      [SmoothOfRelativeDimension (k + k) (v ≫ W.hom)],
+    letI : IsClosedImmersion (i1_smoothLift ι v j hj).left := by
+      change IsClosedImmersion j
+      infer_instance
+    letI : SmoothOfRelativeDimension (k + k) (Over.mk (v ≫ W.hom)).hom :=
+      ‹SmoothOfRelativeDimension (k + k) (v ≫ W.hom)›
+    ∀ (hD : ∀ (A : V.Opens) (hA : IsAffineOpen A) (x : ComplexPoint Q)
+      (hx : x ∈ Point.overOpen (j ⁻¹ᵁ A)) (z : ComplexPoint (Over.mk (v ≫ W.hom)))
+      (hz : Point.map (i1_smoothLift ι v j hj) x ∈ (chartAt (Fin (k + k) → ℂ) z).source),
+      Function.Injective (retainedAffineConormalDifferential (Over.mk (v ≫ W.hom)) Q (i1_smoothLift ι v j hj) (k + k) A hA x hx z hz) ∧
+      Module.finrank ℂ (LinearMap.range
+        (retainedAffineConormalDifferential (Over.mk (v ≫ W.hom)) Q (i1_smoothLift ι v j hj) (k + k) A hA x hx z hz)) = k)
+    (g : ChartHermitianMetric (ComplexPoint (Over.mk (v ≫ W.hom))) (k + k)) (n : ℕ)
+    (emb : ComplexPoint (Over.mk (v ≫ W.hom)) → EuclideanSpace ℝ (Fin n))
+    (hemb : ContMDiff 𝓘(ℝ, Fin (k + k) → ℂ) 𝓘(ℝ, EuclideanSpace ℝ (Fin n)) ω emb),
+    Nonempty (RetainedEuclideanNormalField ι k v j hj n emb g))
+    (nP : ℕ)
+    (e : W ⟶ Over.mk (ProjectiveSpace.toBase (Fin (nP+1)) (Spec ↧ℂ)))
+    [IsImmersion e.left]
+    (c : s2e_supportedClass W (s2e_componentCycle ι ℚ) k)
+    (hc : a3b4_IsCycleClass W.hom (s2e_componentCycle ι ℚ) k c) :
+    let N := i1_analyticNormal j k (v ≫ W.hom) (Over.w (i1_smoothLift ι v j hj))
+    letI := N.fiberBundle
+    letI := N.vectorBundle
+    ∃ (U : Opens (TotalSpace (Fin k → ℂ) (i1_normalFibre j)))
+      (T : Opens (ComplexPoint (Over.mk (v ≫ W.hom)))) (h : U ≃ₜ T),
+      (∀ x : ComplexPoint Q, zeroSection (Fin k → ℂ) (i1_normalFibre j) x ∈ U) ∧
+      (∀ (x : ComplexPoint Q) (hx : zeroSection (Fin k → ℂ) (i1_normalFibre j) x ∈ U),
+        (h ⟨zeroSection (Fin k → ℂ) (i1_normalFibre j) x, hx⟩).1 =
+          Point.map (i1_smoothLift ι v j hj) x) ∧
+      ∃ hs : ∀ z : U,
+        i1_tubularAmbientMap v j k U T h z ∈
+          a3b4_cycleSupport W.hom (s2e_componentCycle ι ℚ) ↔ z.1.2 = 0,
+        relativeCohomologyMap ℚ (2 * k)
+          (i1_neighbourhoodPairMap k (i1_normalFibre j) U
+            (X := TopCat.of (ComplexPoint W))
+            (a3b4_cycleSupport W.hom (s2e_componentCycle ι ℚ))
+            (i1_tubularAmbientMap v j k U T h)
+            (fun z hz hmem => hz ((hs z).mp hmem))) c =
+        relativeCohomologyMap ℚ (2 * k)
+          (i1_neighbourhoodInclusion k (i1_normalFibre j) U)
+          (i1_bundleThom k (i1_normalFibre j))  := by
+  let N := i1_analyticNormal j k (v ≫ W.hom) (Over.w (i1_smoothLift ι v j hj))
+  letI := N.fiberBundle
+  letI := N.vectorBundle
+  dsimp only
+  let t := Classical.choice (joint_projective_normal_tube_exists ι k v j hj hNormalField nP e)
+  refine ⟨t.source, t.target, t.map, t.contains_zero, t.map_zero, t.support, ?_⟩
+  have hn := transported_eq_thom ι k v j hj t c hc
+  change transportedClass ι k v j hj t.toNormalTube c =
+    i1_bundleThom k (i1_normalFibre j) at hn
+  rw [← hn]
+  symm
+  exact (LinearEquiv.ofBijective
+    (relativeCohomologyMap ℚ (2 * k) (i1_neighbourhoodInclusion k (i1_normalFibre j) t.source))
+    (i1_neighbourhoodInclusion_relativeCohomology_bijective k (i1_normalFibre j)
+      t.source t.contains_zero (2 * k))).apply_symm_apply _
+
+#print axioms joint_projective_normal_tube_exists
+#print axioms joint_projective_tubular_support_comparison
+end HodgeLean.Foundations.TubularEuler

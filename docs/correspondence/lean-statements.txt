@@ -1,0 +1,286 @@
+# Lean statements (source text up to the proof), with file:line.
+# Refs: main = 4 final statements, the supplied powers clause, U2 supplier, dictionary, Lie bridge;
+# Each block is labelled with its location. Blocks marked SUPERSEDED were truncated in earlier rounds; the complete text is in definitions-r3.txt.
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperFinalC3.lean:40
+/-- Selected Theorem A with the selected C3 numerical construction. -/
+theorem g32_c3_final_theoremA (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (W : letI := (torusCohomology_cupProductOf A).finite
+      HodgeBlocks.WeilAction
+        (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+          (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+          (torusCohomology_cupProductOf A)).weight1 3)
+    (pol : HQ A 2) :
+    G32TheoremAStatement A W pol := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperFinalC3.lean:55
+/-- Theorem B with the selected C3 numerical construction. -/
+theorem g32_c3_final_theoremB (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    {L : Type*} [Field L] [Algebra ℚ L]
+    {Y : Over (Spec ↧ℂ)} [GrpObj Y] [IsCommMonObj Y] [IsIntegral Y.left]
+    [Smooth Y.hom] [IsProjective Y.hom] {r : ℕ} (θ : L →ₐ[ℚ] AbelianEnd0 A) (u : L)
+    (hu : u ^ 2 = -algebraMap ℚ L 3) (hL : Algebra.adjoin ℚ {u} = ⊤) (pol : HQ A 2)
+    (hη : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol))
+    (hRos : IsRosatiSkew (polarizationVec (torusCohomology_cupProductOf A) pol) (pwAction A θ u))
+    (hGk : letI := (finiteBetti_abelian A).finite 1
+      HodgeLieIsGk (abelianWeightOneHodgeStructure A).H
+        (abelianWeightOneHodgeStructure A).isInternal
+        (polarizationForm (torusCohomology_cupProductOf A) hη) (pwActionRange A θ)
+        (pwAction A θ u))
+    (hM : letI := (finiteBetti_abelian A).finite 1
+      IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A)
+        (f1_weilAction A θ u 3 hu) pol)
+    (P : AbelianPowerData A Y r) :
+    ∀ q : ℕ, Hdg^q(Y; ℚ) ≤ algebraicCycleClassSpan Y q := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperFinalC3.lean:81
+/-- Corollary 8.2 first clause with the selected C3 construction. -/
+theorem g32_c3_final_corollary82_first (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (pol : HQ A 2) (Q : G32Native.TypeIIISixfoldData A pol)
+    (hdisc : (Q.discriminantUnit : ℚˣ ⧸ HodgeLean.Foundations.HermitianForm.normSubgroup (QuadraticAlgebra ℚ (-3) 0)) =
+      classNegTwo) :
+    WeilClassesAlgebraic (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A)
+        (G32Native.typeIIIWeilAction Q)
+        (G32Native.typeIII_member_of_discriminant Q hdisc).isWeilType := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperFinalC3.lean:97
+/-- Corollary 8.2 powers with the selected C3 construction. -/
+theorem g32_c3_final_corollary82_second (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (W : letI := (torusCohomology_cupProductOf A).finite
+      HodgeBlocks.WeilAction
+        (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+          (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+          (torusCohomology_cupProductOf A)).weight1 3)
+    (pol : HQ A 2)
+    (hMember : IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+      (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) W pol)
+    (P : GeneralPELMember A W pol hMember)
+    (hPowers : ∀ (P : GeneralPELMember A W pol hMember),
+      (∀ x : HQ A (2 * 3), x ∈ quaternionicSpan A (weilSix A W pol hMember) →
+        x ∈ algebraicCycleClassSpan A 3) →
+      ∀ (Y : Over (Spec ↧ℂ)) [GrpObj Y] [IsCommMonObj Y]
+        [IsIntegral Y.left] [Smooth Y.hom] [IsProjective Y.hom]
+        (r : ℕ), 0 < r → AbelianPowerData A Y r →
+        ∀ p : ℕ, Hdg^p(Y; ℚ) ≤ algebraicCycleClassSpan Y p) :
+    ∀ (Y : Over (Spec ↧ℂ)) [GrpObj Y] [IsCommMonObj Y]
+      [IsIntegral Y.left] [Smooth Y.hom] [IsProjective Y.hom]
+      (r : ℕ), 0 < r → AbelianPowerData A Y r →
+      ∀ q : ℕ, Hdg^q(Y; ℚ) ≤ algebraicCycleClassSpan Y q := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperFinalC3Supplied.lean:43
+/-- Corollary 8.2 powers with the selected C3 construction. -/
+theorem g32_final_corollary82_second_c3_supplied (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (W : letI := (torusCohomology_cupProductOf A).finite
+      HodgeBlocks.WeilAction
+        (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+          (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+          (torusCohomology_cupProductOf A)).weight1 3)
+    (pol : HQ A 2)
+    (hMember : IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+      (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) W pol)
+    (P : GeneralPELMember A W pol hMember) :
+    ∀ (Y : Over (Spec ↧ℂ)) [GrpObj Y] [IsCommMonObj Y]
+      [IsIntegral Y.left] [Smooth Y.hom] [IsProjective Y.hom]
+      (r : ℕ), 0 < r → AbelianPowerData A Y r →
+      ∀ q : ℕ, Hdg^q(Y; ℚ) ≤ algebraicCycleClassSpan Y q := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/ResidueJointRemainingInputsOfC3.lean:42
+/-- The selected C3 construction supplies both remaining geometric fields.
+Source: Schoen, Compositio Mathematica 65 (1988), Sublemma 2.7;
+Lee, Introduction to Smooth Manifolds, second edition, Theorem 6.24. -/
+theorem jointRemainingInputs_of_c3
+    {c : Fin 10 → ℂ} {g : Fin 13 → b4b_Group}
+    (D : b65z_SharedFamily c g)
+    (hg : g32h_Nielsen (fun j ↦ b4b_toMatrix (g j)))
+    (B : Module.Basis (Fin 12) ℤ
+      (b63l_parameterLattice c D.C D.hC (b6t_polydisc c) (Set.Subset.refl _) (b65z_s₀ c))) :
+    G32RemainingGeometricInputs D hg B := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/PrintedPolarizationDictionary.lean:72
+/-- Printed-to-cohomological polarization dictionary, in rational homology coordinates.
+Source: G32 v0.18, Definition 2.1 and §2, lines 133–145; van Geemen, LNM 1594, §5.
+The geometric action induces `P.W`; the polarization class is constructed from `P.E`.
+The two named comparison steps above retain their separate proof obligations. -/
+theorem printed_polarization_dictionary (P : PrintedPolarizedTriple A)
+    (hdisc : P.discriminant = classNegTwo) :
+    ∃ pol : HQ A 2,
+      IsMemberOfM (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A) P.W pol := by
+
+-- main  HodgeLean/Adapters/PowersVocabulary.lean:98
+/-- **(P3) at `L = k = ℚ(√-3)` is `hSU`.** By `spec_pw0_gkLie_adjoin_eq` and
+`spec_eqw_complexSpan_weilSU_eq_complexSU`, `HodgeLieIsGk` at `R = ℚ[J]` is the equality of
+`F1575MemberHodgeGroupIsSU`'s shape.
+Source: PW v0.3, proof of Theorem 3.1, first paragraph (`G_k(A) = SU(V,H)` at `e = 1`);
+`spec_eqw_complexSpan_weilSU_eq_complexSU` (`Foundations/EQWCore.lean`). -/
+theorem spec_pw0_hodgeLieIsGk_adjoin_iff (H : ℤ × ℤ → Submodule ℂ (ℂ ⊗[ℚ] V))
+    (hH : DirectSum.IsInternal H) (E : LinearMap.BilinForm ℚ V) (hE : E.Nondegenerate)
+    (hAlt : E.IsAlt) (J : Module.End ℚ V) (hJ : J.comp J = (-3 : ℚ) • LinearMap.id)
+    (hskew : ∀ x y, E (J x) y = -E x (J y)) :
+    HodgeLieIsGk H hH E (Algebra.adjoin ℚ {J}) J ↔
+      complexSpan (hodgeLieAlgebra H hH).toSubmodule =
+        (complexSU E hE J hJ hskew).toSubmodule :=
+
+-- an internal development branch  HodgeLean/Foundations/Program/G32Native/G32Corollary82IntrinsicForm.lean:15
+/-- Corollary 8.2 first clause with −b disc(T) = −2 imposed on the intrinsic
+class of the supplied form, before any choice of orthogonal presentation. -/
+theorem g32_c3_final_corollary82_first_of_form_intrinsic (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (pol : HQ A 2) (F : G32Native.TypeIIIFormData A pol)
+    (hdisc : F.discriminantClass = classNegTwo) :
+    let Q := F.diagonal
+    let hd := F.discriminantClass_eq.symm.trans hdisc
+    WeilClassesAlgebraic (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A)
+        (G32Native.typeIIIWeilAction Q)
+        (G32Native.typeIII_member_of_discriminant Q hd).isWeilType := by
+
+-- an internal development branch  HodgeLean/Foundations/Program/G32Native/G32PELGenericMember.lean:69
+/-- A member with the generic PEL Hodge group satisfies the exact rational
+Lie condition used by the G32 powers implication.
+Source: Abdulali, Annals of Mathematics 155 (2002), Proposition 2.3.1,
+p. 919, and §4, p. 922; Borel, Linear Algebraic Groups, §3.5. -/
+theorem general_pel_lie_of_generic_hodge_group
+    (b : ℚ) (hb : b < 0) (end0 : ℍ[ℚ, -3, 0, b] ≃ₐ[ℚ] AbelianEnd0 A)
+    (heisenstein : W.J = (abelianEnd0Action A (end0 ⟨0, 1, 0, 0⟩)).unop)
+    (hadj : ∀ d x y,
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate
+        ((abelianEnd0Action A (end0 d)).unop x) y =
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate x
+        ((abelianEnd0Action A (end0 (star d))).unop y))
+    {n : ℕ} (basis : Module.Basis (Fin n) ℚ (HQ A 1))
+    (hGroup : g2_hodgeGroup
+      (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+        (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+        (torusCohomology_cupProductOf A)).weight1.H
+      (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+        (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+        (torusCohomology_cupProductOf A)).weight1.isInternal basis =
+      GeneralTypeIII.pelGenericGroup
+        (LinearMap.toMatrix₂ (Algebra.TensorProduct.basis ℂ basis)
+          (Algebra.TensorProduct.basis ℂ basis)
+          ((polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate).baseChange ℂ))
+        (Set.range fun i : Fin 4 =>
+          LinearMap.toMatrix (Algebra.TensorProduct.basis ℂ basis)
+            (Algebra.TensorProduct.basis ℂ basis)
+            ((abelianEnd0Action A
+              (end0 (QuaternionAlgebra.basisOneIJK (-3 : ℚ) 0 b i))).unop.baseChange ℂ))) :
+    let S := abelianVarietyCohomologyOf (finiteBetti_abelian A)
+      (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+      (torusCohomology_cupProductOf A)
+    let E := polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate
+    (hodgeLieAlgebra S.weight1.H S.weight1.isInternal : Set (Module.End ℚ (HQ A 1))) =
+      {X | (∀ x y, E (X x) y + E x (X y) = 0) ∧
+        ∀ d : AbelianEnd0 A, X.comp (abelianEnd0Action A d).unop =
+          (abelianEnd0Action A d).unop.comp X} := by
+
+
+# Added for round 2 (on main):
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32PaperPrintedPowers.lean:14
+/-- Every rational Hodge class on every positive power of a general member
+of the effective polarized PEL family is algebraic.
+Source: G32 v0.18, Corollary 8.2(ii), lines 706 and 710. -/
+theorem g32_final_corollary82_second_printed
+    {R : PELSplitReference} (F : PELSplitFamily R) (z : PELSplitComponent R)
+    (hgeneral : F.hodgeGroup z = F.genericGroup)
+    (h : IsMemberOfM (finiteBetti_abelian (F.fibre z).X)
+      (spec_bettiDeRhamIso_abelian (F.fibre z).X)
+      (hodgeDecomposition_of_abelian (F.fibre z).X)
+      (torusCohomology_cupProductOf (F.fibre z).X) (F.fibre z).W (F.fibre z).pol) :
+    ∀ r : ℕ, 0 < r → ∀ q : ℕ,
+      Hdg^q(g3_power (F.fibre z).X r; ℚ) ≤
+        algebraicCycleClassSpan (g3_power (F.fibre z).X r) q := by
+
+-- main  HodgeLean/Foundations/Program/G32Native/G32Corollary82IntrinsicForm.lean:15
+/-- Corollary 8.2 first clause with −b disc(T) = −2 imposed on the intrinsic
+class of the supplied form, before any choice of orthogonal presentation. -/
+theorem g32_c3_final_corollary82_first_of_form_intrinsic (A : Over (Spec ↧ℂ))
+    [GrpObj A] [IsCommMonObj A] [IsIntegral A.left] [Smooth A.hom] [IsProjective A.hom]
+    (pol : HQ A 2) (F : G32Native.TypeIIIFormData A pol)
+    (hdisc : F.discriminantClass = classNegTwo) :
+    let Q := F.diagonal
+    let hd := F.discriminantClass_eq.symm.trans hdisc
+    WeilClassesAlgebraic (finiteBetti_abelian A) (spec_bettiDeRhamIso_abelian A)
+        (hodgeDecomposition_of_abelian A) (torusCohomology_cupProductOf A)
+        (G32Native.typeIIIWeilAction Q)
+        (G32Native.typeIII_member_of_discriminant Q hd).isWeilType := by
+
+-- SUPERSEDED (truncated; complete statements in definitions-r3.txt, section N1)  main  HodgeLean/Foundations/Program/G32Native/G32PELGenericMember.lean:30 and :69
+
+/-- The generic Hodge group of the connected quaternionic PEL isometry
+ group supplies the original G32 general-member record. The input is an
+ algebraic group equality, and the rational Lie equality is derived internally.
+ Source: Abdulali, Annals of Mathematics 155 (2002), Proposition 2.3.1,
+ pp. 919, 922, and §§3.1–3.3; Borel, Linear Algebraic Groups, §3.5. -/
+def generalPELMember_of_generic_hodge_group
+    (b : ℚ) (hb : b < 0) (end0 : ℍ[ℚ, -3, 0, b] ≃ₐ[ℚ] AbelianEnd0 A)
+    (heisenstein : W.J = (abelianEnd0Action A (end0 ⟨0, 1, 0, 0⟩)).unop)
+    (hadj : ∀ d x y,
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate
+        ((abelianEnd0Action A (end0 d)).unop x) y =
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate x
+        ((abelianEnd0Action A (end0 (star d))).unop y))
+    {n : ℕ} (basis : Module.Basis (Fin n) ℚ (HQ A 1))
+    (hGroup : g2_hodgeGroup
+      (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+        (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+        (torusCohomology_cupProductOf A)).weight1.H
+    end0 := P.end0
+    eisenstein := P.eisenstein
+    rosati := P.rosati
+    general := P.general }
+
+/-- A member with the generic PEL Hodge group satisfies the exact rational
+Lie condition used by the G32 powers implication.
+Source: Abdulali, Annals of Mathematics 155 (2002), Proposition 2.3.1,
+p. 919, and §4, p. 922; Borel, Linear Algebraic Groups, §3.5. -/
+theorem general_pel_lie_of_generic_hodge_group
+    (b : ℚ) (hb : b < 0) (end0 : ℍ[ℚ, -3, 0, b] ≃ₐ[ℚ] AbelianEnd0 A)
+    (heisenstein : W.J = (abelianEnd0Action A (end0 ⟨0, 1, 0, 0⟩)).unop)
+    (hadj : ∀ d x y,
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate
+        ((abelianEnd0Action A (end0 d)).unop x) y =
+      polarizationForm (torusCohomology_cupProductOf A) h.nondegenerate x
+        ((abelianEnd0Action A (end0 (star d))).unop y))
+    {n : ℕ} (basis : Module.Basis (Fin n) ℚ (HQ A 1))
+    (hGroup : g2_hodgeGroup
+      (abelianVarietyCohomologyOf (finiteBetti_abelian A)
+        (spec_bettiDeRhamIso_abelian A) (hodgeDecomposition_of_abelian A)
+
+-- main  HodgeLean/Adapters/HodgeGroupHomology.lean:19 (Theorem B, printed homological group equality to HodgeLieIsGk)
+open HodgeLean.RealDefs HodgeLean.Foundations HodgeLean.Foundations.WeilPower
+open HodgeLean.Foundations.Symplectic
+namespace HodgeLean.Adapters
+
+variable (A : Over (Spec ↧ℂ)) [GrpObj A] [IsCommMonObj A] [IsIntegral A.left]
+  [Smooth A.hom] [IsProjective A.hom]
+variable {L : Type*} [Field L] [Algebra ℚ L]
+
+/-- The homological group equality implies the cohomological `HodgeLieIsGk` input of Theorem B. -/
+theorem f1_hodgeLieIsGk_of_homology_group_eq (θ : L →ₐ[ℚ] AbelianEnd0 A) (u : L)
+    (hu : u ^ 2 = -algebraMap ℚ L 3) (pol : HQ A 2)
+    (hη : IsNondegenerate (polarizationVec (torusCohomology_cupProductOf A) pol))
+    {n : ℕ} (b : Module.Basis (Fin n) ℚ (HQ A 1))
+    (h : g2_homologyHodgeGroup (abelianWeightOneHodgeStructure A).H
+        (abelianWeightOneHodgeStructure A).isInternal b =
+      g2_homologySpecialUnitary b (polarizationForm (torusCohomology_cupProductOf A) hη)
+        (pwActionRange A θ) (pwAction A θ u) 3) :
+    letI := (finiteBetti_abelian A).finite 1
+    HodgeLieIsGk (abelianWeightOneHodgeStructure A).H
+      (abelianWeightOneHodgeStructure A).isInternal
+      (polarizationForm (torusCohomology_cupProductOf A) hη)
+      (pwActionRange A θ) (pwAction A θ u) := by
+  let _ := (finiteBetti_abelian A).finite 1
+  exact g2_hodgeLieIsGk_of_homology_group_eq _ _ b _ _ _ (by norm_num)
+    (f1_weilAction A θ u 3 hu).J_sq
+    (nondegenerate_polarizationForm (torusCohomology_cupProductOf A) hη) h
+
+/-- Composition with the existing Hermitian Lie comparison, starting on homology. -/

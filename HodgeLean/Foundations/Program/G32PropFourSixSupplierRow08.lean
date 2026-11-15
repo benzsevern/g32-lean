@@ -1,0 +1,136 @@
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixSupplierRow08Decode
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0027
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0028
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0029
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0030
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0031
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0025
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0026
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixSupplierRow08CharacterBlock00
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0064
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0019
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0019
+import HodgeLean.Foundations.Program.G32PropFourSixPacked0019
+import HodgeLean.Foundations.Program.G32PropFourSixFiniteCheck
+import HodgeLean.Foundations.Program.G32PropFourSixArchiveReverse
+
+noncomputable section
+
+namespace HodgeLean.Foundations.Program
+
+open HodgeLean.Papers
+
+set_option maxHeartbeats 400000
+set_option maxRecDepth 2048
+
+def g32p_row08_finiteSupplier : g32p_Supplier :=
+  g32p_supplierOfFiniteTransitions (by decide) g32p_row08_groupGenerators
+    g32p_row08_groupEquiv 0 g32p_row08_groupEquiv_one
+    g32p_row08_groupNext g32p_row08_groupEquiv_step g32p_row08_characterValues
+    (by rfl) g32p_row08_characterTransition g32p_row08_characterSurjective
+
+theorem g32p_row08_finiteSupplier_order : Nat.card g32p_row08_finiteSupplier.H = 648 :=
+  g32p_row08_groupOrder
+
+theorem g32p_row08_finiteSupplier_value (i : Fin 648) :
+    g32p_row08_finiteSupplier.χ (g32p_row08_groupEquiv i) = g32p_row08_characterValues i :=
+  g32p_supplierOfFiniteTransitions_value ..
+
+end HodgeLean.Foundations.Program

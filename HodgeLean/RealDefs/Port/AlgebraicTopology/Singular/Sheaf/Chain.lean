@@ -1,0 +1,63 @@
+/-
+Copyright 2026 The Formal Conjectures Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-/
+
+import HodgeConjecture.Lemmas.AlgebraicTopology.Singular.Cohomology
+import Mathlib.Algebra.Category.Grp.Basic
+import Mathlib.Algebra.Category.ModuleCat.Basic
+import Mathlib.Algebra.Category.ModuleCat.Presheaf.Sheafification
+import Mathlib.Algebra.Homology.Embedding.CochainComplex
+import Mathlib.Topology.Sheaves.Abelian
+import Mathlib.Topology.Sheaves.Sheafify
+import HodgeConjecture.Lemmas.AlgebraicTopology.Singular.Sheaf.Chain
+
+/-! Ported, with modifications (imports rewritten to this repository's modules, the `module`
+header dropped, public/expose section markers removed; the upstream licence and notice are in
+`HodgeLean/RealDefs/Port/LICENSE` and `NOTICE`), from upstream's `Other/AlgebraicTopology/Singular/Sheaf/Chain.lean`
+at `2ead713`. -/
+
+/-!
+# Chain, the part the statement does not need
+
+Separated out of
+`HodgeConjecture.Lemmas.AlgebraicTopology.Singular.Sheaf.Chain`:
+nothing in the statement's dependency chain uses these results, only material in
+`Other` does.
+-/
+
+noncomputable section
+open CategoryTheory Limits TopologicalSpace
+universe u
+namespace AlgebraicTopology.Singular
+variable (R : Type u) [CommRing R] (X : TopCat.{u})
+
+/-- The chain-complex-level identification of stalks before and after sheafification.
+This is not yet an identification with the local relative homology at `x`. -/
+def singularChainSheafificationStalkIso (x : X) :
+    ((TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x).mapHomologicalComplex
+      (ComplexShape.down ℕ)).obj (singularChainPresheafComplex R X) ≅
+    ((TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x).mapHomologicalComplex
+      (ComplexShape.down ℕ)).obj
+      (((TopCat.Sheaf.forget AddCommGrpCat.{u} X).mapHomologicalComplex
+        (ComplexShape.down ℕ)).obj (singularChainSheafComplex R X)) :=
+  let f := ((TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x).mapHomologicalComplex
+    (ComplexShape.down ℕ)).map (singularChainSheafificationUnit R X)
+  have : ∀ n, IsIso (f.f n) := fun n ↦
+    singularChainSheafificationUnit_stalk_isIso R X x n
+  have : IsIso f := HomologicalComplex.Hom.isIso_of_components f
+  asIso f
+
+end AlgebraicTopology.Singular
+end

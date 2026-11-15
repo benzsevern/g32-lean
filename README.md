@@ -2,7 +2,7 @@
 
 Contact: Benjamin Severn, benzsevern@gmail.com
 
-Archived release: v1.0, doi:[10.5281/zenodo.24239596](https://doi.org/10.5281/zenodo.24239596).
+Archived releases: v1.0.1 (documentation update), doi:[10.5281/zenodo.24241039](https://doi.org/10.5281/zenodo.24241039); v1.0, doi:[10.5281/zenodo.24239596](https://doi.org/10.5281/zenodo.24239596). All versions: doi:[10.5281/zenodo.24239595](https://doi.org/10.5281/zenodo.24239595).
 
 This repository contains a Lean 4 formalization of the main results of
 

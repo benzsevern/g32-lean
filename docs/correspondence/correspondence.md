@@ -1,4 +1,6 @@
-# G32 v0.18 statement correspondence
+# G32 statement correspondence (established against v0.18; applies to the final v0.19)
+
+**Paper version.** Line numbers and printed extracts below refer to G32 v0.18. The final paper v0.19 has the same mathematical statements: it adds only Section 1.4, one bibliography entry and a date. Every numbered statement keeps its number, and a v0.18 line L is v0.19 line L (L <= 92), L + 3 (93 <= L <= 977) or L + 4 (L >= 978). See printed/VERSIONS.md for the complete diff.
 
 Checked: revised 2026-11-14 ET for Hodge's correspondence rulings. The working base was `752d86f06c`; `origin/main` at `d7df1c1a1e51d5bdd1c69babf692055395131d70` has been merged. Printed source: `notes/weil-nonsplit-g32-v0.18.tex`, paper ref `7ca4c2aa`, DOI `10.5281/zenodo.24171563`, transcribed in `origin/lane-briefs:docs/notes/g32-v0.18-printed-extract.md` and `docs/notes/g32-v0.18-appendixB-extract.md`. Numbers are **TeX source lines**. Appendix B's supplier and vector tables are identical in v0.16 and v0.18; only the closing prose line differs, per Hodge's version comparison. The supplied Appendix B extract now includes both literal tables, lines 798–848 and 864–914.
 

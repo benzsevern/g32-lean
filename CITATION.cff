@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this formalization, please cite it and the paper it formalizes."
 title: "g32-lean: a Lean 4 formalization of the G32 paper"
-version: "1.0"
+version: "1.0.1"
 doi: 10.5281/zenodo.24239596
 date-released: 2026-11-15
 license: Apache-2.0
@@ -13,11 +13,11 @@ authors:
     email: benzsevern@gmail.com
 references:
   - type: article
-    title: "G32"
-    version: "v0.18"
+    title: "Algebraicity of Weil classes on abelian sixfolds of Weil type for Q(√−3) with discriminant −2"
+    version: "v0.19"
     authors:
       - family-names: Severn
         given-names: Benjamin
         email: benzsevern@gmail.com
-    doi: "10.5281/zenodo.24171563"
-    url: "https://doi.org/10.5281/zenodo.24171563"
+    doi: "10.5281/zenodo.24239608"
+    url: "https://doi.org/10.5281/zenodo.24239608"
